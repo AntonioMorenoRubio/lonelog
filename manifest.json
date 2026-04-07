@@ -1,11 +1,11 @@
 {
 	"id": "lonelog",
 	"name": "Lonelog",
-	"version": "1.1.0",
+	"version": "1.2",
 	"minAppVersion": "0.15.0",
 	"description": "Streamline solo TTRPG journaling with Lonelog notation shortcuts and templates.",
-	"author": "Christopher Hardiman",
-	"authorUrl": "",
-	"fundingUrl": "",
+	"author": "Bastion del Dinosaurio",
+	"authorUrl": "https://www.youtube.com/@BastiondelDinosaurio",
+	"fundingUrl": "www.patreon.com/c/BastiondelDinosaurio",
 	"isDesktopOnly": false
 }

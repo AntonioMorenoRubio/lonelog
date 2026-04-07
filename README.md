@@ -1,195 +1,194 @@
-# Lonelog Plugin for Obsidian
+# Lonelog for Obsidian  - Solo TTRPG Journaling
 
-Streamline your solo TTRPG journaling with quick shortcuts for [Lonelog notation](https://zeruhur.itch.io/lonelog) - the standard notation system for solo RPG session logging.
+[![version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/snifer/lonelog/releases)
+[![license](https://img.shields.io/badge/license-0--BSD-green.svg)](LICENSE)
 
-## Features
+**Lonelog for Obsidian** streamlines your solo TTRPG journaling by bringing the [Lonelog notation](https://zeruhur.itch.io/lonelog) standard directly into your vault. Focus on the story while keeping mechanics organized, visual, and fast.
 
-### Syntax Highlighting
-
-Beautiful, configurable syntax highlighting for Lonelog notation in both editor and reading modes:
-
-- **Live Editor Highlighting** - Color-coded notation as you type in `lonelog` code blocks
-- **Reading Mode Highlighting** - Rendered views with full syntax coloring
-- **Customizable Colors** - Visual color picker and text input for all notation elements:
-  - Action lines (`@`) - Default blue
-  - Question lines (`?`) - Default purple
-  - Dice rolls (`d:`) - Default green
-  - Consequences (`=>`) - Default red
-  - Result arrows (`->`) - Default yellow
-  - Tags (`[N:...]`, `[Thread:...]`, etc.) - Default orange
-- **Flexible Input** - Use color picker, hex values, color names, or CSS variables
-- **Toggle Controls** - Enable/disable highlighting independently for editor and reading modes
-
-### Notation Commands
-
-Quick insertion commands for all Lonelog notation elements:
-
-**Single-Symbol Commands:**
-- `@` - Insert action symbol
-- `?` - Insert question symbol  
-- `d:` - Insert dice roll symbol
-- `->` - Insert result symbol
-- `=>` - Insert consequence symbol
-
-**Multi-Line Patterns:**
-- **Action Sequence** - Full action/roll/consequence template
-- **Oracle Sequence** - Full question/answer/consequence template
-
-**Tag Snippets:**
-- **NPC Tag** - `[N:Name|]` with cursor positioned for editing
-- **Location Tag** - `[L:Name|]`
-- **Event/Clock** - `[E:Name 0/6]`
-- **Track** - `[Track:Name 0/6]`
-- **Thread** - `[Thread:Name|Open]`
-- **PC Tag** - `[PC:Name|]`
-- **Timer** - `[Timer:Name 0]`
-- **Reference Tag** - `[#N:Name]`
-
-### Templates & Structure
-
-- **Campaign Header** - Insert metadata for your campaign
-- **Session Header** - Create session headers with auto-numbering
-- **Scene Markers** - Insert scene markers with auto-incrementing numbers and context
-- **Code Block Wrapper** - Toggle `lonelog` code block wrapping
-
-### Visual Panels
-
-- **Progress Tracker** - View and update all clocks, tracks, and timers in a side panel
-- **Thread Browser** - Browse all NPCs, locations, player characters, and threads
-- **Scene Navigator** - Navigate sessions and scenes with a hierarchical view
-
-### Smart Features
-
-- **Auto-completion** - Tag suggestions based on previously mentioned NPCs, locations, threads, and PCs
-- **Smart Cursor Positioning** - Automatically positions cursor for optimal editing
-- **Auto-increment** - Automatically detects and increments scene numbers
-
-## Installation
-
-### Manual Installation (Development)
-
-1. This plugin is in active development
-2. Make sure the plugin is in your vault's `.obsidian/plugins/lonelog/` directory
-3. Reload Obsidian
-4. Enable "Lonelog" in Settings → Community Plugins
-
-### From Community Plugins (Coming Soon)
-
-Once released, search for "Lonelog" in Obsidian's Community Plugins.
-
-## Usage
-
-### Quick Start
-
-1. Open any note in your vault
-2. Press `Ctrl/Cmd + P` to open the command palette
-3. Type "Lonelog" to see all available commands
-4. Select a command to insert notation
-
-### Configuring Shortcuts
-
-Customize keyboard shortcuts for your most-used commands:
-
-1. Go to Settings → Hotkeys
-2. Search for "Lonelog"
-3. Click the `+` icon next to any command to set a hotkey
-
-**Suggested Hotkeys:**
-- `Ctrl+Shift+A` - Insert action (@)
-- `Ctrl+Shift+Q` - Insert question (?)
-- `Ctrl+Alt+A` - Insert action sequence
-- `Ctrl+Alt+O` - Insert oracle sequence
-
-### Settings
-
-Configure plugin behavior in Settings → Lonelog:
-
-**Core Notation:**
-- **Insert space after symbols** - Add automatic spacing after @ ? d: -> =>
-- **Smart cursor positioning** - Jump cursor to optimal edit position in tags
-
-**Templates:**
-- **Auto-increment scene numbers** - Automatically detect and increment scene numbers
-- **Prompt for scene context** - Show modal to enter scene context when inserting a scene marker
-
-**Syntax Highlighting:**
-- **Enable editor highlighting** - Toggle live preview syntax highlighting
-- **Enable reading mode highlighting** - Toggle reading view syntax highlighting
-- **Highlighting colors** - Customize colors for each notation element using:
-  - Visual color picker (click to choose from palette)
-  - Text input (hex codes like `#ff0000`, color names like `red`, rgba values, CSS variables)
-  - Reset button to restore defaults
-
-## Examples
-
-### Using Single Symbols
-
-```
-@ Attack the guard
-d: d20+5=18 vs AC 15 -> Success
-=> The guard falls unconscious
-```
-
-### Using Action Sequence
-
-Command inserts:
-```
-@ [action]
-d: [roll] -> [outcome]
-=> [consequence]
-```
-
-You type:
-```
-@ Sneak past the patrol
-d: Stealth 6≥4 -> Success
-=> I slip by unnoticed into the shadows
-```
-
-### Using Tag Snippets
-
-Command inserts `[N:Name|]` with "Name" selected, you just type:
-```
-[N:Captain Torres|hostile|armed]
-```
-
-## What is Lonelog?
-
-Lonelog is a standardized notation system for logging solo TTRPG sessions. It separates mechanics from fiction using simple symbols:
-
-- `@` for player actions
-- `?` for oracle questions
-- `d:` for dice rolls
-- `->` for results
-- `=>` for consequences
-- `[Type:Name|tags]` for persistent elements
-
-Learn more: See [lonelog.md](lonelog.md) for the full specification
-
-## License
-
-This plugin is licensed under [0-BSD License](LICENSE).
-
-The Lonelog notation system is © 2025-2026 Roberto Bisceglie, **Creative Commons Attribution-ShareAlike 4.0 International License**.
-
-**You are free to:**
-
-- Share — copy and redistribute the material
-- Adapt — remix, transform, and build upon the material
-
-**Under these terms:**
-
-- Attribution — Give appropriate credit
-- ShareAlike — Distribute adaptations under the same license
-
-## Credits
-
-- **Plugin Author**: Christopher Hardiman
-- **Lonelog System**: Roberto Bisceglie
-- **Inspired by**: The Valley Standard notation system
+**Lonelog para Obsidian** optimiza el registro de tus partidas de rol en solitario (Solo TTRPG) integrando el estándar de [notación Lonelog](https://zeruhur.itch.io/lonelog) directamente en tu bóveda. Céntrate en la historia mientras mantienes las mecánicas organizadas, visuales y ágiles.
 
 ---
 
-*Happy solo adventuring!*
+## Funcionalidades Principales
 
+### 1.  Sistema de Notación Inteligente
+Inserción rápida de los símbolos base de Lonelog mediante la paleta de comandos o atajos personalizados:
+- `@` Action / Acción
+- `?` Oracle Question / Pregunta de Oráculo
+- `d:` Dice Roll / Tirada de Dados
+- `->` Result / Resultado
+- `=>` Consequence / Consecuencia
+- `[Tag:Name|Attributes]` Entity Tags (NPCs, Locations, PCs, etc.) / Etiquetas de Entidad.
+
+### 2. Gestión de Campaña y Sesiones
+
+**Cabeceras Automáticas**: Inserta las cabeceras para registrar una campaña y sesión al instante.
+**Marcadores de Escena**: Numeración automática de escenas con avisos opcionales de contexto.
+ **Bloques de Código**: Engbloba tus registros en bloques `lonelog` para un renderizado mejorado.
+
+ ```lonelog
+@ El personaje
+d: 1d6 -> 5
+-> Sucede algo sospechoso.
+ ```
+
+### 3. Mejoras visuales
+
+**Resaltado de Sintaxis**: Código de colores en tiempo real en Live Preview y modo lectura formateado.
+**Personalización Total**: Control total de colores para cada símbolo desde el panel de ajustes.
+**Paneles Laterales**: Vistas dedicadas en panel derecho específico para:
+
+- **Relojes/Tracks de progreso**
+- **Hilos de historia/NPCs** 
+- **Navegación de escenas**.
+
+### 4.  Extensiones Avanzadas 
+Actualmente se esta dando soporte para mecánicas especializadas de Lonelog:
+
+- **Combate**: Seguimiento de rondas, bloques de combate y etiquetas de enemigos.
+- **Exploración de Mazmorras**: Seguimiento del estado de habitaciones y resúmenes de mazmorra.
+ **Gestión de Recursos**: Control de inventario y riqueza.
+
+### 5. Otras funciones 
+
+-  **Autocompletado**: Sugerencias inteligentes de etiquetas basadas en entidades mencionadas anteriormente.
+- **Internacionalización**: Totalmente localizado en Inglés y Español.
+
+---
+
+## Instalación
+
+### BRAT (recommended for beta testing)
+1. Instala el plug-in BRAT 
+2. En configuraciones de  BRAT settings, click en Add Beta Plugin
+3. Ingresa [https://github.com/Snifer/lonelog](https://github.com/Snifer/lonelog)
+4. Habilita Lonelog  en Configuraciones > Plugins Comunitarios
+
+
+
+### Instalación Manual (Desarrollo)
+1. Este plugin se encuentra en desarrollo activo.
+2. Clona o mueve los archivos de release a la carpeta de tu bóveda: `.obsidian/plugins/lonelog/`.
+3. Actualiza los plugins en Obsidian 
+4. Habilita **Lonelog** en **Ajustes → Plugins de la comunidad**.
+
+### Desde Plugins de la Comunidad
+*Coming Soon / Próximamente*
+
+
+---
+
+## Uso
+
+1. Abre cualquier nota.
+2. Presiona `Ctrl/Cmd + P` para abrir la paleta de comandos.
+3. Escribe **"Lonelog"** para ver todos los comandos de inserción y gestión disponibles.
+4. (Recomendado) Asigna atajos de teclado para un registro más rápido en **Ajustes → Atajos de teclado**.
+
+
+
+
+**English Description**
+
+## Funcionalidades Principales
+
+### 1. Smart Notation System 
+Quickly insert Lonelog core symbols using the Command Palette or custom hotkeys:
+
+- `@` Action / Acción
+- `?` Oracle Question / Pregunta de Oráculo
+- `d:` Dice Roll / Tirada de Dados
+- `->` Result / Resultado
+- `=>` Consequence / Consecuencia
+- `[Tag:Name|Attributes]` Entity Tags (NPCs, Locations, PCs, etc.) / Etiquetas de Entidad.
+
+### 2. Campaign & Session Management 
+- **Automatic Headers**: Insert campaign and session structure instantly. 
+- **Scene Markers**: Automatic scene numbering with optional context prompts.
+- **Code Blocks**: Wrap your logs in `lonelog` blocks for enhanced rendering. 
+
+### 3. Interface 
+
+- **Syntax Highlighting**: Real-time color coding in Live Preview and formatted Reading Mode.  
+- **Total Customization**: Full control over colors for every symbol via the settings panel. 
+- **Side Panels**: Dedicated views for **Progress Tracks/Clocks**, **Story Threads/NPCs**, and **Scene Navigation**. 
+
+### 4. Add-ons Integrated
+Full support for specialized Lonelog mechanics: 
+- **Combat**: Round tracking, combat blocks `[COMBAT]`, and Foe tags `[F:]`. 
+- **Dungeon Crawling**: Room state tracking `[R:]` and dungeon status snapshots. 
+- **Resource Tracking**: Inventory  and Wealth management. 
+
+### 5.  Other functions
+- **Autocomplete**: Intelligent suggestions for tags based on previously mentioned entities. 
+- **I18n**: Fully localized in English and Spanish. 
+
+---
+
+## Installation 
+
+### BRAT (recommended for beta testing)
+1. Install the BRAT plugin
+2. In BRAT settings, click Add Beta Plugin
+3. Enter [https://github.com/Snifer/lonelog](https://github.com/Snifer/lonelog)
+4.Enable lonelog in Settings > Community Plugins
+
+### Manual Installation (Development) /
+1. This plugin is in active development, and compile 
+2. Clone or move the plugin files into your vault's folder: `.obsidian/plugins/lonelog/`. 
+3. Reload Obsidian. 
+4. Enable **Lonelog** in **Settings → Community Plugins**. 
+
+
+### From Community Plugins / Desde Plugins de la Comunidad
+*Coming Soon / Próximamente*
+
+
+
+
+---
+
+## 📖 Usage 
+
+1. Open any note.
+2. Press `Ctrl/Cmd + P` to open the command palette. 
+3. Type **"Lonelog"** to see all available insertion and management commands. 
+4. (Recommended) Assign hotkeys for faster logging in **Settings → Hotkeys**. 
+
+
+
+
+---
+
+## 💻 Development / Desarrollo
+
+```bash
+# Install dependencies / Instalar dependencias
+npm install
+
+# Build (watch mode) / Compilar (modo observación)
+npm run dev
+
+# Production build / Compilar para producción
+npm run build
+```
+
+---
+
+## 📄 License / Licencia
+
+This plugin is licensed under the **0-BSD License**. See [LICENSE](LICENSE) for details.
+The Lonelog notation system is © 2025-2026 Roberto Bisceglie, licensed under **CC BY-SA 4.0**.
+
+Este plugin está bajo la licencia **0-BSD**. Consulta [LICENSE](LICENSE) para más detalles.
+El sistema de notación Lonelog es © 2025-2026 Roberto Bisceglie, bajo licencia **CC BY-SA 4.0**.
+
+---
+
+## 🖤 Credits / Créditos
+
+- **Original Plugin Author / Autor Original del Plugin**: Chris Hardiman
+- **Current Development / Desarrollado actual:** [Snifer](https://www.youtube.com/@BastiondelDinosaurio) [Bastion del Dinosaurio](https://www.youtube.com/@BastiondelDinosaurio)
+- **Lonelog System / Sistema Lonelog**: [Roberto Bisceglie](https://zeruhur.itch.io/lonelog)
+- **Design Philosophy / Filosofía de Diseño**: Inspired by the Valley Standard and modern Solo TTRPG practices. / Inspirado en el Valley Standard y prácticas modernas de Solo TTRPG.
 

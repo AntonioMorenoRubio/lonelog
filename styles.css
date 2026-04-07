@@ -78,11 +78,6 @@ If your plugin does not need CSS, delete this file.
 	border-radius: 3px;
 }
 
-.lonelog-color-input {
-	width: 180px;
-	font-family: var(--font-monospace);
-}
-
 /* Common Panel Styles */
 
 .lonelog-empty-state {
@@ -527,6 +522,31 @@ If your plugin does not need CSS, delete this file.
 	font-weight: 500;
 }
 
+.ll-meta {
+	color: var(--ll-meta-color, #71717a);
+	font-style: italic;
+}
+
+.ll-dialogue {
+	color: var(--ll-dialogue-color, #0891b2);
+	font-weight: 500;
+}
+
+.ll-narrative {
+	color: var(--ll-narrative-color, #db2777);
+	font-weight: 600;
+}
+
+.ll-table {
+	color: var(--ll-table-color, #84cc16);
+	font-weight: 600;
+}
+
+.ll-generator {
+	color: var(--ll-generator-color, #0d9488);
+	font-weight: 600;
+}
+
 /* ── Dark theme adjustments ───────────────────────────────── */
 
 .theme-dark .ll-action {
@@ -543,6 +563,26 @@ If your plugin does not need CSS, delete this file.
 
 .theme-dark .ll-consequence {
 	color: var(--ll-consequence-color, #f87171);
+}
+
+.theme-dark .ll-meta {
+	color: var(--ll-meta-color, #a1a1aa);
+}
+
+.theme-dark .ll-dialogue {
+	color: var(--ll-dialogue-color, #22d3ee);
+}
+
+.theme-dark .ll-narrative {
+	color: var(--ll-narrative-color, #f472b6);
+}
+
+.theme-dark .ll-table {
+	color: var(--ll-table-color, #a3e635);
+}
+
+.theme-dark .ll-generator {
+	color: var(--ll-generator-color, #2dd4bf);
 }
 /* ============================================================
    Lonelog Editor Highlighting (live preview)
@@ -580,4 +620,304 @@ If your plugin does not need CSS, delete this file.
 .ll-ed-tag {
 	color: var(--ll-tag-color, #c2410c);
 	font-weight: 500;
+}
+
+.ll-ed-meta {
+	color: var(--ll-meta-color, #71717a);
+	font-style: italic;
+}
+
+.ll-ed-dialogue {
+	color: var(--ll-dialogue-color, #0891b2);
+	font-weight: 500;
+}
+
+.ll-ed-narrative {
+	color: var(--ll-narrative-color, #db2777);
+	font-weight: 600;
+}
+
+.ll-ed-table {
+	color: var(--ll-table-color, #84cc16);
+	font-weight: 600;
+}
+
+.ll-ed-generator {
+	color: var(--ll-generator-color, #0d9488);
+	font-weight: 600;
+}
+
+.ll-ed-round {
+	color: var(--ll-dice-color, #22c55e);
+	font-weight: 800;
+	border-bottom: 2px solid var(--ll-dice-color, #22c55e);
+	padding-bottom: 1px;
+}
+
+.ll-ed-combat {
+	color: var(--ll-consequence-color, #ef4444);
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+
+.ll-ed-dungeon {
+	color: var(--ll-tag-color, #c2410c);
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+
+.ll-ed-resource {
+	color: var(--ll-result-color, #ca8a04);
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+
+/* ── Sidebar Roll & Table Styles ────────────────────────────────────── */
+
+.lonelog-roll-dice {
+	color: var(--ll-dice-color, #22c55e);
+	font-weight: 600;
+}
+
+.lonelog-roll-context {
+	color: var(--ll-meta-color, #71717a);
+	font-style: italic;
+	font-size: 0.85em;
+	margin-left: 4px;
+}
+
+.lonelog-roll-result {
+	color: var(--ll-result-color, #ca8a04);
+	font-weight: 700;
+	margin-left: 4px;
+}
+
+.lonelog-table-tag {
+	font-weight: 600;
+}
+
+.lonelog-tag-table {
+	color: var(--ll-table-color, #84cc16);
+}
+
+.lonelog-tag-generator {
+	color: var(--ll-generator-color, #0d9488);
+}
+
+.lonelog-table-result {
+	color: var(--text-muted);
+	font-size: 0.9em;
+	margin-left: 4px;
+}
+
+.lonelog-roll-item, .lonelog-table-item {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+/* Combat UI Styles */
+.lonelog-combat-group {
+	margin-top: 8px;
+	border-left: 2px solid var(--ll-consequence-color, #ef4444);
+	padding-left: 8px;
+}
+
+.lonelog-combat-label {
+	font-size: 0.75em;
+	text-transform: uppercase;
+	font-weight: 700;
+	color: var(--ll-consequence-color, #ef4444);
+	margin-bottom: 4px;
+	opacity: 0.8;
+}
+
+.lonelog-foe-stats {
+	font-size: 0.85em;
+	color: var(--text-muted);
+	font-style: italic;
+}
+
+.lonelog-round-scroll {
+	display: flex;
+	gap: 4px;
+	flex-wrap: wrap;
+	margin-top: 4px;
+}
+
+/* Dungeon UI Styles */
+.lonelog-scene-room-icons {
+	display: flex;
+	gap: 4px;
+	margin-left: 28px;
+	margin-top: 2px;
+}
+
+.lonelog-room-icon {
+	font-size: 0.9em;
+	cursor: help;
+	opacity: 0.8;
+}
+
+.lonelog-room-icon:hover {
+	opacity: 1;
+}
+
+.lonelog-tag-dungeon {
+	color: var(--ll-tag-color, #c2410c);
+	font-weight: 600;
+}
+
+.lonelog-room-desc {
+	font-size: 0.9em;
+	color: var(--text-normal);
+	font-weight: 500;
+}
+
+.lonelog-room-status-list {
+	font-size: 0.8em;
+	color: var(--text-muted);
+	margin-top: 2px;
+	padding-left: 4px;
+	border-left: 1px solid var(--background-modifier-border);
+}
+
+/* Resource UI Styles */
+.lonelog-wealth-row {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-bottom: 8px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.lonelog-wealth-item {
+	background: var(--background-secondary);
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-size: 0.9em;
+	cursor: pointer;
+}
+
+.lonelog-wealth-name {
+	font-weight: 600;
+	color: var(--ll-location-color, #1d4ed8);
+}
+
+.lonelog-resource-qty {
+	font-size: 0.85em;
+	color: var(--text-muted);
+	margin-left: auto;
+}
+
+/* Dice Widget */
+.lonelog-dice-widget {
+	cursor: pointer;
+	margin-left: 4px;
+	font-size: 0.9em;
+	opacity: 0.6;
+	transition: opacity 0.2s, transform 0.1s;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.lonelog-dice-widget:hover {
+	opacity: 1;
+	transform: scale(1.2);
+}
+
+.lonelog-dice-widget:active {
+	transform: scale(0.9);
+}
+
+/* 3D Dice Overlay */
+.lonelog-dice-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+	pointer-events: none;
+	perspective: 1000px;
+	background: rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(2px);
+	transition: opacity 0.3s;
+}
+
+.lonelog-dice-scene {
+	width: 100px;
+	height: 100px;
+	perspective: 600px;
+}
+
+.lonelog-cube {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	transform-style: preserve-3d;
+	transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.lonelog-cube.rolling {
+	animation: lonelog-rolling 1.5s linear;
+}
+
+.lonelog-cube-face {
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	border: 2px solid var(--text-normal);
+	line-height: 100px;
+	font-size: 40px;
+	font-weight: bold;
+	color: var(--text-normal);
+	text-align: center;
+	background: var(--background-primary);
+	box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+	border-radius: 12px;
+	backface-visibility: hidden;
+}
+
+/* Face positions */
+.face-1 { transform: rotateY(0deg) translateZ(50px); }
+.face-2 { transform: rotateY(180deg) translateZ(50px); }
+.face-3 { transform: rotateY(90deg) translateZ(50px); }
+.face-4 { transform: rotateY(-90deg) translateZ(50px); }
+.face-5 { transform: rotateX(90deg) translateZ(50px); }
+.face-6 { transform: rotateX(-90deg) translateZ(50px); }
+
+/* Animation Keyframes */
+@keyframes lonelog-rolling {
+	0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+	25% { transform: rotateX(150deg) rotateY(150deg) rotateZ(150deg); }
+	50% { transform: rotateX(300deg) rotateY(300deg) rotateZ(300deg); }
+	75% { transform: rotateX(450deg) rotateY(450deg) rotateZ(450deg); }
+	100% { transform: rotateX(600deg) rotateY(600deg) rotateZ(600deg); }
+}
+
+/* Result orientations */
+.show-1 { transform: rotateY(0deg); }
+.show-2 { transform: rotateY(-180deg); }
+.show-3 { transform: rotateY(-90deg); }
+.show-4 { transform: rotateY(90deg); }
+.show-5 { transform: rotateX(-90deg); }
+.show-6 { transform: rotateX(90deg); }
+
+.lonelog-dice-result-text {
+	position: absolute;
+	bottom: 20%;
+	font-size: 2em;
+	font-weight: bold;
+	color: var(--text-accent);
+	text-shadow: 0 0 10px rgba(0,0,0,0.5);
+	animation: lonelog-pop-in 0.3s ease-out;
+}
+
+@keyframes lonelog-pop-in {
+	0% { transform: scale(0); opacity: 0; }
+	100% { transform: scale(1.2); opacity: 1; }
 }
