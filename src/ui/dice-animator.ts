@@ -18,7 +18,7 @@ export class DiceAnimator {
 
 		// Create faces for 3D look
 		for (let i = 1; i <= 6; i++) {
-			cube.createEl("div", { 
+			cube.createEl("div", {
 				cls: `lonelog-cube-face face-${i}`,
 				text: sides === 6 ? i.toString() : "?"
 			});
@@ -29,12 +29,12 @@ export class DiceAnimator {
 
 		// Set final face for d6 or just show result for others
 		cube.classList.remove("rolling");
-		
+
 		if (sides === 6 && total >= 1 && total <= 6) {
 			cube.classList.add(`show-${total}`);
 		} else {
 			// Non-d6 result display
-			const resultText = this.overlay.createEl("div", {
+			this.overlay.createEl("div", {
 				cls: "lonelog-dice-result-text",
 				text: total.toString()
 			});
@@ -48,15 +48,15 @@ export class DiceAnimator {
 	private createOverlay(): void {
 		if (this.overlay) return;
 		this.overlay = document.body.createEl("div", { cls: "lonelog-dice-overlay" });
-		this.overlay.style.opacity = "0";
+		this.overlay.classList.add("lonelog-hidden");
 		// Force reflow
-		this.overlay.offsetHeight;
-		this.overlay.style.opacity = "1";
+		void this.overlay.offsetHeight;
+		this.overlay.classList.remove("lonelog-hidden");
 	}
 
 	private removeOverlay(): void {
 		if (!this.overlay) return;
-		this.overlay.style.opacity = "0";
+		this.overlay.classList.add("lonelog-hidden");
 		setTimeout(() => {
 			if (this.overlay) {
 				this.overlay.remove();

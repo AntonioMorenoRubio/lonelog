@@ -42,12 +42,12 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 	enableReadingHighlighting: true,
 
 	// Match the values currently used in highlighter.css
-	colorAction:      "#3b82f6",  // blue
-	colorQuestion:    "#8b5cf6",  // purple
-	colorDice:        "#22c55e",  // green
+	colorAction: "#3b82f6",  // blue
+	colorQuestion: "#8b5cf6",  // purple
+	colorDice: "#22c55e",  // green
 	colorConsequence: "#ef4444",  // red
-	colorResult:      "#ca8a04",  // yellow
-	colorTag:         "#c2410c",  // orange
+	colorResult: "#ca8a04",  // yellow
+	colorTag: "#c2410c",  // orange
 };
 
 /** Sets Lonelog CSS custom properties on document.body */
@@ -89,12 +89,12 @@ interface ColorDef {
 }
 
 const COLOR_DEFS: ColorDef[] = [
-	{ key: "colorAction",      label: "Action (@)",         desc: "Text color for @ lines" },
-	{ key: "colorQuestion",    label: "Question (?)",        desc: "Text color for ? lines" },
-	{ key: "colorDice",        label: "Dice roll (d:)",      desc: "Text color for d: lines" },
-	{ key: "colorConsequence", label: "Consequence (=>)",    desc: "Text color for => lines" },
-	{ key: "colorResult",      label: "Result arrow (->)",   desc: "Text color for -> tokens" },
-	{ key: "colorTag",         label: "Tags ([N:…] etc.)",   desc: "Text color for bracket tag tokens" },
+	{ key: "colorAction", label: "Action (@)", desc: "Text color for @ lines" },
+	{ key: "colorQuestion", label: "Question (?)", desc: "Text color for ? lines" },
+	{ key: "colorDice", label: "Dice roll (d:)", desc: "Text color for d: lines" },
+	{ key: "colorConsequence", label: "Consequence (=>)", desc: "Text color for => lines" },
+	{ key: "colorResult", label: "Result arrow (->)", desc: "Text color for -> tokens" },
+	{ key: "colorTag", label: "Tags ([N:…] etc.)", desc: "Text color for bracket tag tokens" },
 ];
 
 export class LonelogSettingTab extends PluginSettingTab {
@@ -168,7 +168,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Enable editor highlighting")
-			.setDesc("Highlight Lonelog notation while editing code blocks")
+			.setDesc("Highlight lonelog notation while editing code blocks")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.enableEditorHighlighting)

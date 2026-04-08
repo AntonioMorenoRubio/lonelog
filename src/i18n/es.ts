@@ -38,7 +38,7 @@ export default {
 	},
 	"settings": {
 		"header": "Ajustes de Notación Lonelog",
-		"core-section": "Notación de núcleo",
+		"core-section": "Notación básica",
 		"insert-space": "Insertar espacio tras símbolos",
 		"insert-space-desc": "Añade un espacio tras @ ? d: -> => para facilitar la escritura",
 		"smart-cursor": "Posicionamiento inteligente del cursor",

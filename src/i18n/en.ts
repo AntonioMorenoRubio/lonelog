@@ -37,7 +37,7 @@ export default {
 		"roll-current-line": "Roll dice on current line"
 	},
 	"settings": {
-		"header": "Lonelog Notation Settings",
+		"header": "Lonelog notation settings",
 		"core-section": "Core notation",
 		"insert-space": "Insert space after symbols",
 		"insert-space-desc": "Add a space after @ ? d: -> => for easier typing",
@@ -63,20 +63,20 @@ export default {
 		"color-generator-desc": "Text color for generator rolls"
 	},
 	"modals": {
-		"campaign-title": "New Campaign Header",
-		"scene-context-title": "Scene Context",
+		"campaign-title": "New campaign header",
+		"scene-context-title": "Scene context",
 		"context-label": "Context",
 		"context-placeholder": "e.g., 'Dark alley, midnight'",
 		"create": "Create",
 		"insert": "Insert"
 	},
 	"views": {
-		"progress-title": "Lonelog Progress",
-		"thread-title": "Lonelog Threads",
-		"scene-title": "Lonelog Scenes",
-		"progress-header": "Progress Tracker",
-		"story-header": "Story Elements",
-		"scene-nav-header": "Scene Navigator",
+		"progress-title": "Lonelog progress",
+		"thread-title": "Lonelog threads",
+		"scene-title": "Lonelog scenes",
+		"progress-header": "Progress tracker",
+		"story-header": "Story elements",
+		"scene-nav-header": "Scene navigator",
 		"no-active-file": "No active file",
 		"no-sessions": "No sessions found. Use 'Insert session header' to create one.",
 		"no-progress": "No progress elements found",
@@ -85,20 +85,20 @@ export default {
 		"items": "items",
 		"sessions": "sessions",
 		"scenes": "scenes",
-		"clocks": "Event Clocks",
+		"clocks": "Event clocks",
 		"tracks": "Tracks",
 		"timers": "Timers",
-		"pcs": "Player Characters",
+		"pcs": "Player characters",
 		"npcs": "NPCs",
 		"locations": "Locations",
 		"threads": "Threads",
 		"session": "Session",
-		"rolls-header": "Recent Rolls & Tables",
+		"rolls-header": "Recent rolls & tables",
 		"no-rolls": "No rolls or table results found",
-		"combat-header": "Combat Roster",
-		"foes-label": "Foes & Combatants",
-		"rounds-label": "Round Journal",
-		"dungeon-header": "Dungeon Status",
-		"inventory-header": "Inventory & Wealth"
+		"combat-header": "Combat roster",
+		"foes-label": "Foes & combatants",
+		"rounds-label": "Round journal",
+		"dungeon-header": "Dungeon status",
+		"inventory-header": "Inventory & wealth"
 	}
 };

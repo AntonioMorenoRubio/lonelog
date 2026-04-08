@@ -1,7 +1,7 @@
 import en from "./en";
 import es from "./es";
 
-const locales: Record<string, any> = {
+const locales: Record<string, Record<string, unknown>> = {
 	en,
 	es,
 };
@@ -16,20 +16,20 @@ export function setLocale(locale: string) {
 
 export function t(key: string): string {
 	const parts = key.split(".");
-	let res = locales[currentLocale] || locales["en"];
-	
+	let res: unknown = locales[currentLocale] || locales["en"];
+
 	for (const part of parts) {
-		res = res[part];
+		res = (res as Record<string, unknown>)[part];
 		if (!res) {
 			// Fallback to English if key missing in current locale
-			let fallback = locales["en"];
+			let fallback: unknown = locales["en"];
 			for (const fp of parts) {
-				fallback = fallback[fp];
+				fallback = (fallback as Record<string, unknown>)[fp];
 				if (!fallback) return key;
 			}
-			return fallback;
+			return fallback as string;
 		}
 	}
-	
+
 	return res as string;
 }

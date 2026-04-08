@@ -167,6 +167,7 @@ export class ThreadBrowserView extends ItemView {
 		const sectionHeader = section.createEl("div", {
 			cls: "lonelog-thread-section-header",
 		});
+		// eslint-disable-next-line obsidianmd/ui/sentence-case
 		sectionHeader.createEl("h5", { text: "NPCs" });
 		sectionHeader.createEl("span", {
 			text: `${npcs.size}`,

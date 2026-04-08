@@ -1,6 +1,6 @@
 import { Plugin } from "obsidian";
-import { 
-	DEFAULT_SETTINGS, LonelogSettings, LonelogSettingTab, applyHighlightColors, removeHighlightColors 
+import {
+	DEFAULT_SETTINGS, LonelogSettings, LonelogSettingTab, applyHighlightColors, removeHighlightColors
 } from "./settings";
 import { NotationCommands } from "./commands/notation";
 import { TemplateCommands } from "./commands/templates";
@@ -145,7 +145,7 @@ export default class LonelogPlugin extends Plugin {
 		// Tag snippet commands
 		this.addCommand({
 			id: "insert-npc-tag",
-			name: "Insert NPC tag",
+			name: "Insert npc tag",
 			editorCallback: (editor) => {
 				NotationCommands.insertNPCTag(editor, this.settings);
 			},
@@ -185,7 +185,7 @@ export default class LonelogPlugin extends Plugin {
 
 		this.addCommand({
 			id: "insert-pc-tag",
-			name: "Insert PC tag",
+			name: "Insert pc tag",
 			editorCallback: (editor) => {
 				NotationCommands.insertPCTag(editor, this.settings);
 			},

@@ -37,6 +37,7 @@ export class CampaignHeaderModal extends Modal {
 
 		new Setting(contentEl)
 			.setName("Ruleset")
+			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			.setDesc("E.g., Ironsworn, Mythic GME, Loner")
 			.addText((text) =>
 				text.onChange((value) => {
@@ -63,6 +64,7 @@ export class CampaignHeaderModal extends Modal {
 
 		new Setting(contentEl)
 			.setName("Player characters")
+			// eslint-disable-next-line obsidianmd/ui/sentence-case
 			.setDesc("E.g., alex [PC:alex|HP 8]")
 			.addText((text) =>
 				text.onChange((value) => {
@@ -238,9 +240,9 @@ export class SceneContextModal extends Modal {
 	onOpen() {
 		const { contentEl } = this;
 		contentEl.createEl("h2", { text: "Scene context" });
-
 		new Setting(contentEl)
 			.setName("Context")
+			 
 			.setDesc(
 				"E.g., 'dark alley, midnight' or 'lighthouse tower, dusk'"
 			)
@@ -466,9 +468,9 @@ notes:
 		const lines = content.split("\n");
 
 		// Check line before selection
-	const beforeLine = lines[cursor.line - 1] ?? "";
-	// Check line after selection
-	const afterLine = lines[cursorTo.line + 1] ?? "";
+		const beforeLine = lines[cursor.line - 1] ?? "";
+		// Check line after selection
+		const afterLine = lines[cursorTo.line + 1] ?? "";
 		const isWrapped =
 			beforeLine.trim().startsWith("```") &&
 			afterLine.trim() === "```";
