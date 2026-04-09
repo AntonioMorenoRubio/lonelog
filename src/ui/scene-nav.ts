@@ -41,10 +41,10 @@ export class SceneNavigatorView extends ItemView {
 		return "map";
 	}
 
-	async onOpen(): Promise<void> {
+	onOpen(): Promise<void> {
 		const container = this.containerEl.children[1];
-		if (!container) return;
-		if (!(container instanceof HTMLElement)) return;
+		if (!container) return Promise.resolve();
+		if (!(container instanceof HTMLElement)) return Promise.resolve();
 		container.empty();
 		container.addClass("lonelog-scene-container");
 
@@ -65,6 +65,7 @@ export class SceneNavigatorView extends ItemView {
 		);
 
 		void this.refresh();
+		return Promise.resolve();
 	}
 
 	async refresh(): Promise<void> {

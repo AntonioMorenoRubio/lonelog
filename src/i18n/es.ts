@@ -37,7 +37,7 @@ export default {
 		"roll-current-line": "Tirar dados en la línea actual"
 	},
 	"settings": {
-		"header": "Ajustes de Notación Lonelog",
+		"header": "Ajustes de notación Lonelog",
 		"core-section": "Notación básica",
 		"insert-space": "Insertar espacio tras símbolos",
 		"insert-space-desc": "Añade un espacio tras @ ? d: -> => para facilitar la escritura",
@@ -63,8 +63,8 @@ export default {
 		"color-generator-desc": "Color de texto para tiradas de generador"
 	},
 	"modals": {
-		"campaign-title": "Nuevo Encabezado de Campaña",
-		"scene-context-title": "Contexto de la Escena",
+		"campaign-title": "Nuevo encabezado de campaña",
+		"scene-context-title": "Contexto de la escena",
 		"context-label": "Contexto",
 		"context-placeholder": "ej. 'Callejón oscuro, medianoche'",
 		"create": "Crear",
@@ -74,20 +74,20 @@ export default {
 		"progress-title": "Progreso Lonelog",
 		"thread-title": "Hilos Lonelog",
 		"scene-title": "Escenas Lonelog",
-		"progress-header": "Rastreador de Progreso",
-		"story-header": "Elementos de Historia",
-		"scene-nav-header": "Navegador de Escenas",
-		"dungeon-header": "Estado de Mazmorra",
-		"inventory-header": "Inventario y Riqueza",
+		"progress-header": "Rastreador de progreso",
+		"story-header": "Elementos de historia",
+		"scene-nav-header": "Navegador de escenas",
+		"dungeon-header": "Estado de mazmorra",
+		"inventory-header": "Inventario y riqueza",
 		"no-active-file": "No hay archivo activo",
 		"no-sessions": "No se encontraron sesiones. Usa 'Insertar encabezado' para crear una.",
 		"no-progress": "No hay elementos de progreso",
 		"no-story": "No hay elementos de historia",
 		"no-scenes": "Sin escenas aún",
-		"items": "elementos",
-		"sessions": "sesiones",
-		"scenes": "escenas",
-		"clocks": "Relojes de Evento",
+		"items": "Elementos",
+		"sessions": "Sesiones",
+		"scenes": "Escenas",
+		"clocks": "Relojes de evento",
 		"tracks": "Tracks",
 		"timers": "Temporizadores",
 		"pcs": "Personajes (PJ)",
@@ -95,7 +95,7 @@ export default {
 		"locations": "Lugares",
 		"threads": "Hilos",
 		"session": "Sesión",
-		"rolls-header": "Tiradas y Tablas Recientes",
+		"rolls-header": "Tiradas y tablas recientes",
 		"no-rolls": "No se encontraron tiradas ni resultados de tablas"
 	}
 };

@@ -37,8 +37,7 @@ export class CampaignHeaderModal extends Modal {
 
 		new Setting(contentEl)
 			.setName("Ruleset")
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
-			.setDesc("E.g., Ironsworn, Mythic GME, Loner")
+			.setDesc("E.g., ironsworn, mythic gme, loner")
 			.addText((text) =>
 				text.onChange((value) => {
 					this.ruleset = value;
@@ -64,8 +63,7 @@ export class CampaignHeaderModal extends Modal {
 
 		new Setting(contentEl)
 			.setName("Player characters")
-			// eslint-disable-next-line obsidianmd/ui/sentence-case
-			.setDesc("E.g., alex [PC:alex|HP 8]")
+			.setDesc("E.g., alex [pc:alex|hp 8]")
 			.addText((text) =>
 				text.onChange((value) => {
 					this.pcs = value;

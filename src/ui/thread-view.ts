@@ -35,10 +35,10 @@ export class ThreadBrowserView extends ItemView {
 		return "list";
 	}
 
-	async onOpen(): Promise<void> {
+	onOpen(): Promise<void> {
 		const container = this.containerEl.children[1];
-		if (!container) return;
-		if (!(container instanceof HTMLElement)) return;
+		if (!container) return Promise.resolve();
+		if (!(container instanceof HTMLElement)) return Promise.resolve();
 		container.empty();
 		container.addClass("lonelog-thread-container");
 
@@ -59,6 +59,7 @@ export class ThreadBrowserView extends ItemView {
 		);
 
 		void this.refresh();
+		return Promise.resolve();
 	}
 
 	async refresh(): Promise<void> {
@@ -167,8 +168,7 @@ export class ThreadBrowserView extends ItemView {
 		const sectionHeader = section.createEl("div", {
 			cls: "lonelog-thread-section-header",
 		});
-		// eslint-disable-next-line obsidianmd/ui/sentence-case
-		sectionHeader.createEl("h5", { text: "NPCs" });
+		sectionHeader.createEl("h5", { text: "Npcs" });
 		sectionHeader.createEl("span", {
 			text: `${npcs.size}`,
 			cls: "lonelog-section-count",

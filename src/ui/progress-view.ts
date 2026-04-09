@@ -28,10 +28,10 @@ export class ProgressTrackerView extends ItemView {
 		return "clock";
 	}
 
-	async onOpen(): Promise<void> {
+	onOpen(): Promise<void> {
 		const container = this.containerEl.children[1];
-		if (!container) return;
-		if (!(container instanceof HTMLElement)) return;
+		if (!container) return Promise.resolve();
+		if (!(container instanceof HTMLElement)) return Promise.resolve();
 		container.empty();
 		container.addClass("lonelog-progress-container");
 
@@ -52,6 +52,7 @@ export class ProgressTrackerView extends ItemView {
 		);
 
 		void this.refresh();
+		return Promise.resolve();
 	}
 
 	async refresh(): Promise<void> {
@@ -102,7 +103,7 @@ export class ProgressTrackerView extends ItemView {
 
 		// Render each type
 		if (clocks.length > 0) {
-			this.renderSection(container, "Event Clocks", clocks);
+			this.renderSection(container, "Event clocks", clocks);
 		}
 		if (tracks.length > 0) {
 			this.renderSection(container, "Tracks", tracks);
