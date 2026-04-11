@@ -189,6 +189,18 @@ El sistema de notación Lonelog es © 2025-2026 Roberto Bisceglie, bajo licencia
 
 ---
 
+## ¿Disfrutas usando Lonelog en Obsidian? ☕
+Si este proyecto te aporta valor en tus mesas de juego, puedes apoyar al desarrollador con una donación por PayPal  ¡Gracias por ayudar a que el proyecto siga creciendo!
+
+## Enjoying Lonelog for Obsidian? ☕
+If this project adds value to your gaming table, you can support the developer with a donation via PayPal. Thank you for helping the project keep growing!
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/sniferl4bs)
+
+
+
+
+
 ## 🖤 Credits / Créditos
 
 - **Original Plugin Author / Autor Original del Plugin**: Chris Hardiman
