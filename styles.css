@@ -487,7 +487,8 @@ If your plugin does not need CSS, delete this file.
 	display: block;
 	padding: 0 0.25em;
 	border-radius: 3px;
-	white-space: pre;
+	white-space: pre-wrap;
+	word-break: break-word;
 }
 
 /* ── Token highlighting (text colors) ─────────────────────── */
@@ -610,6 +611,12 @@ If your plugin does not need CSS, delete this file.
    Token-level highlighting only (not line backgrounds).
    Uses the same CSS variables set by applyHighlightColors().
    ============================================================ */
+
+/* Force line wrap in Live Preview */
+.ll-ed-line {
+	white-space: pre-wrap !important;
+	word-break: break-word;
+}
 
 /* Token symbols at line start */
 .ll-ed-action {

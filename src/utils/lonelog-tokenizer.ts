@@ -40,8 +40,8 @@ const LINE_START_PATTERNS: Array<{ pattern: RegExp; type: Exclude<TokenType, "re
 	{ pattern: /^gen:/i, type: "generator" },
 	{ pattern: /^\(/, type: "meta" },
 	{ pattern: /^(\\---?|---\\|-{3,})/, type: "narrative" },
-	{ pattern: /^(?:###\s+)?T?\d*(?:-?S\d*(?:\.\d+|[a-z])?)/i, type: "scene" },
-	{ pattern: /^={3,}.+?={3,}/, type: "header" },
+	{ pattern: /^(?:###\s*(?:Scene|Escena)\b|T?\d*-?S\d+(?:\.\d+|[a-z])?\b)/i, type: "scene" },
+	{ pattern: /^(?:={3,}.+?={3,}|##\s+Sesi[óo]n\b|##\s+Session\b)/i, type: "header" },
 	{ pattern: /^(?:PC|N|[^:]+?)\s?(?:\([^)]+\))?:\s*".*?"/i, type: "dialogue" },
 ];
 

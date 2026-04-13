@@ -93,7 +93,11 @@ export default {
 		"color-dialogue": "Dialogue",
 		"color-dialogue-desc": "Text color for dialogue lines",
 		"color-narrative": "Narrative blocks",
-		"color-narrative-desc": "Text color for narrative blocks"
+		"color-narrative-desc": "Text color for narrative blocks",
+		"color-scene": "Scene",
+		"color-scene-desc": "Text color for scene markers",
+		"color-session": "Session (Header)",
+		"color-session-desc": "Text color for session headers"
 	},
 	"modals": {
 		"campaign-title": "New campaign header",

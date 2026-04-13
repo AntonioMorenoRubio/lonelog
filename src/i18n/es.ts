@@ -93,7 +93,11 @@ export default {
 		"color-dialogue": "Diálogo",
 		"color-dialogue-desc": "Color de texto para líneas de diálogo",
 		"color-narrative": "Bloques narrativos",
-		"color-narrative-desc": "Color de texto para bloques narrativos"
+		"color-narrative-desc": "Color de texto para bloques narrativos",
+		"color-scene": "Escenas (Scene)",
+		"color-scene-desc": "Color de texto para marcadores de escena",
+		"color-session": "Sesiones (Header)",
+		"color-session-desc": "Color de texto para encabezados de sesión"
 	},
 	"modals": {
 		"campaign-title": "Nuevo Encabezado de Campaña",

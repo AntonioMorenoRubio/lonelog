@@ -48,6 +48,8 @@ export interface LonelogSettings {
 	colorNarrative: string;   // \--- narrative --- — pink
 	colorTable: string;       // tbl: — lime
 	colorGenerator: string;   // gen: — teal
+	colorScene: string;       // Scene — user-defined
+	colorHeader: string;      // Header — user-defined
 	locale: string;           // Interface language
 }
 
@@ -93,6 +95,8 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 	colorNarrative: "#db2777",  // pink
 	colorTable: "#84cc16",  // lime
 	colorGenerator: "#0d9488",  // teal
+	colorScene: "#3b82f6", // default blue
+	colorHeader: "#3b82f6", // default blue
 	locale: "en",
 };
 
@@ -109,6 +113,8 @@ export function applyHighlightColors(settings: LonelogSettings): void {
 	document.body.style.setProperty("--ll-narrative-color", settings.colorNarrative);
 	document.body.style.setProperty("--ll-table-color", settings.colorTable);
 	document.body.style.setProperty("--ll-generator-color", settings.colorGenerator);
+	document.body.style.setProperty("--ll-scene-color", settings.colorScene);
+	document.body.style.setProperty("--ll-header-color", settings.colorHeader);
 }
 
 /** Removes the injected CSS custom properties (call from onunload). */
@@ -124,6 +130,8 @@ export function removeHighlightColors(): void {
 	document.body.style.removeProperty("--ll-narrative-color");
 	document.body.style.removeProperty("--ll-table-color");
 	document.body.style.removeProperty("--ll-generator-color");
+	document.body.style.removeProperty("--ll-scene-color");
+	document.body.style.removeProperty("--ll-header-color");
 }
 
 // ---------------------------------------------------------------------------
@@ -144,6 +152,8 @@ interface ColorDef {
 		| "colorNarrative"
 		| "colorTable"
 		| "colorGenerator"
+		| "colorScene"
+		| "colorHeader"
 	>;
 	label: string;
 	desc: string;
@@ -161,6 +171,8 @@ const COLOR_DEFS: ColorDef[] = [
 	{ key: "colorNarrative", label: t("settings.color-narrative"), desc: t("settings.color-narrative-desc") },
 	{ key: "colorTable", label: t("settings.color-table"), desc: t("settings.color-table-desc") },
 	{ key: "colorGenerator", label: t("settings.color-generator"), desc: t("settings.color-generator-desc") },
+	{ key: "colorScene", label: t("settings.color-scene"), desc: t("settings.color-scene-desc") },
+	{ key: "colorHeader", label: t("settings.color-session"), desc: t("settings.color-session-desc") },
 ];
 
 export class LonelogSettingTab extends PluginSettingTab {

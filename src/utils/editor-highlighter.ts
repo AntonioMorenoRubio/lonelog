@@ -166,6 +166,13 @@ function buildDecorations(view: EditorView, settings: LonelogSettings): Decorati
 
 				const lineText = line.text;
 
+				// Add line decoration for text wrapping
+				decorations.push({
+					from: line.from,
+					to: line.from,
+					value: Decoration.line({ class: "ll-ed-line" }),
+				});
+
 				// Tokenize using shared logic
 				const tokens = tokenizeLine(lineText);
 
