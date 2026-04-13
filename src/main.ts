@@ -149,6 +149,14 @@ export default class LonelogPlugin extends Plugin {
 		});
 
 		this.addCommand({
+			id: "roll-dice-on-line",
+			name: t("commands.roll-dice-on-line"),
+			editorCallback: (editor) => {
+				NotationCommands.rollDiceOnLine(editor, this.settings);
+			},
+		});
+
+		this.addCommand({
 			id: "insert-consequence",
 			name: t("commands.insert-consequence"),
 			editorCallback: (editor) => {

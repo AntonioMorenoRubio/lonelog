@@ -35,7 +35,7 @@ export default {
 		"insert-dungeon-status": "Insert dungeon status [DUNGEON STATUS]",
 		"insert-item-tag": "Insert item tag [I:]",
 		"insert-wealth-tag": "Insert wealth tag [W:]",
-		"roll-current-line": "Roll dice on current line"
+		"roll-dice-on-line": "Roll dice on current line"
 	},
 	"settings": {
 		"header": "Lonelog notation settings",

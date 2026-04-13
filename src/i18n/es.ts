@@ -4,6 +4,7 @@ export default {
 		"insert-question": "Insertar pregunta (?)",
 		"insert-dice-roll": "Insertar tirada de dados (d:)",
 		"insert-result": "Insertar resultado (->)",
+		"roll-dice-on-line": "Tirar Dados en la Línea Actual",
 		"insert-consequence": "Insertar consecuencia (=>)",
 		"insert-action-sequence": "Insertar secuencia de acción",
 		"insert-oracle-sequence": "Insertar secuencia de oráculo",
@@ -34,8 +35,7 @@ export default {
 		"insert-room-tag": "Insertar etiqueta de habitación [R:]",
 		"insert-dungeon-status": "Insertar estado de mazmorra [DUNGEON STATUS]",
 		"insert-item-tag": "Insertar etiqueta de objeto [I:]",
-		"insert-wealth-tag": "Insertar etiqueta de riqueza [W:]",
-		"roll-current-line": "Tirar dados en la línea actual"
+		"insert-wealth-tag": "Insertar etiqueta de riqueza [W:]"
 	},
 	"settings": {
 		"header": "Ajustes de Notación Lonelog",

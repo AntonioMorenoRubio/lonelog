@@ -51,7 +51,6 @@ function findLonelogBlocks(state: EditorState): Array<{ from: number, to: number
 class DiceWidget extends WidgetType {
 	constructor(
 		private readonly notation: string,
-		private readonly lineNum: number,
 		private readonly settings: LonelogSettings
 	) {
 		super();
@@ -66,17 +65,27 @@ class DiceWidget extends WidgetType {
 		span.style.cursor = "pointer";
 		span.style.marginLeft = "4px";
 
-		span.onclick = (e) => {
+		// Use pointerdown/mousedown so it triggers before CodeMirror drops the node
+		span.onmousedown = (e) => {
 			e.preventDefault();
 			e.stopPropagation();
-			this.roll(view);
+			this.roll(view, span);
+		};
+		// Also support touch
+		span.ontouchstart = (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			this.roll(view, span);
 		};
 
 		return span;
 	}
 
-	private roll(view: EditorView): void {
-		const line = view.state.doc.line(this.lineNum);
+	private roll(view: EditorView, element: HTMLElement): void {
+		// Find the actual line using the element's current DOM position
+		const pos = view.posAtDOM(element);
+		if (pos === null) return;
+		const line = view.state.doc.lineAt(pos);
 		const lineText = line.text;
 		
 		let notationToRoll = this.notation;
@@ -135,8 +144,8 @@ class DiceWidget extends WidgetType {
 		}
 	}
 
-	ignoreEvent(): boolean {
-		return false;
+	ignoreEvent(event: Event): boolean {
+		return event.type === "mousedown" || event.type === "click" || event.type === "touchstart";
 	}
 }
 
@@ -205,7 +214,7 @@ function buildDecorations(view: EditorView, settings: LonelogSettings): Decorati
 							from: line.to,
 							to: line.to,
 							value: Decoration.widget({
-								widget: new DiceWidget(notation, lineNum, settings),
+								widget: new DiceWidget(notation, settings),
 								side: 1,
 							}),
 						});

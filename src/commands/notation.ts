@@ -1,6 +1,8 @@
 import { App, Editor } from "obsidian";
 import { LonelogSettings } from "../settings";
 import { TrackModal } from "./templates";
+import { DiceRoller } from "../utils/dice-roller";
+import { TableResolver } from "../utils/table-resolver";
 
 export class NotationCommands {
 	// Single symbol insertions
@@ -240,6 +242,65 @@ export class NotationCommands {
 				{ line: cursor.line, ch: cursor.ch + 4 },
 				{ line: cursor.line, ch: cursor.ch + 8 }
 			);
+		}
+	}
+	static rollDiceOnLine(editor: Editor, settings: LonelogSettings): void {
+		const cursor = editor.getCursor();
+		const lineNum = cursor.line;
+		const lineText = editor.getLine(lineNum);
+
+		const notation = DiceRoller.extractNotation(lineText);
+		if (!notation) return;
+
+		let notationToRoll = notation;
+		let tableOutcome: string | undefined;
+
+		// If this is a table roll, try to resolve it
+		if (lineText.trimStart().toLowerCase().startsWith("tbl:")) {
+			const fullContent = editor.getValue();
+			const tables = TableResolver.parseTables(fullContent);
+			
+			// Robust pattern: tbl: Name Dice (handles cases where Name contains 'd')
+			const tblMatch = /tbl:\s*(.+?)\s*(\d*d(?:\d+|f))/i.exec(lineText);
+			if (tblMatch && tblMatch[1] && tblMatch[2]) {
+				const tableName = tblMatch[1].trim().toLowerCase();
+				const dice = tblMatch[2];
+				const table = tables.get(tableName);
+				
+				if (table) {
+					notationToRoll = dice;
+					const rollResult = DiceRoller.roll(dice);
+					if (rollResult) {
+						tableOutcome = TableResolver.resolveEntry(table, rollResult.total) || undefined;
+						
+						const newLineText = DiceRoller.formatResult(lineText, rollResult, {
+							detailMode: settings.diceDetailMode,
+							highLabel: settings.diceHighLabel,
+							showHigh: settings.showDiceHigh,
+							lowLabel: settings.diceLowLabel,
+							showLow: settings.showDiceLow,
+							tableOutcome
+						});
+
+						editor.setLine(lineNum, newLineText);
+						return;
+					}
+				}
+			}
+		}
+
+		// Standard roll (non-table or table not found)
+		const result = DiceRoller.roll(notationToRoll);
+		if (result) {
+			const newLineText = DiceRoller.formatResult(lineText, result, {
+				detailMode: settings.diceDetailMode,
+				highLabel: settings.diceHighLabel,
+				showHigh: settings.showDiceHigh,
+				lowLabel: settings.diceLowLabel,
+				showLow: settings.showDiceLow,
+			});
+
+			editor.setLine(lineNum, newLineText);
 		}
 	}
 }

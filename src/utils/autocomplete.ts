@@ -16,8 +16,10 @@ import { NotationParser, ParsedElements } from "./parser";
 
 interface TagSuggestion {
 	name: string;
-	type: "npc" | "location" | "thread" | "pc";
+	type: "npc" | "location" | "thread" | "pc" | "clock" | "track" | "timer";
 	tags?: string[];
+	current?: number;
+	max?: number;
 	displayText: string;
 }
 
@@ -44,7 +46,7 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 
 		// Check for tag patterns
 		// NPC tag: [N: or [#N:
-		const npcMatch = beforeCursor.match(/\[(#)?N:(\w*)$/);
+		const npcMatch = beforeCursor.match(/\[(#)?N:([^\]|]*)$/);
 		if (npcMatch) {
 			const query = npcMatch[2] || "";
 			const start = cursor.ch - query.length;
@@ -57,7 +59,7 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 		}
 
 		// Location tag: [L:
-		const locationMatch = beforeCursor.match(/\[L:(\w*)$/);
+		const locationMatch = beforeCursor.match(/\[L:([^\]|]*)$/);
 		if (locationMatch) {
 			const query = locationMatch[1] || "";
 			const start = cursor.ch - query.length;
@@ -70,7 +72,7 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 		}
 
 		// Thread tag: [Thread:
-		const threadMatch = beforeCursor.match(/\[Thread:(\w*)$/);
+		const threadMatch = beforeCursor.match(/\[Thread:([^\]|]*)$/);
 		if (threadMatch) {
 			const query = threadMatch[1] || "";
 			const start = cursor.ch - query.length;
@@ -83,7 +85,7 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 		}
 
 		// PC tag: [PC:
-		const pcMatch = beforeCursor.match(/\[PC:(\w*)$/);
+		const pcMatch = beforeCursor.match(/\[PC:([^\]|]*)$/);
 		if (pcMatch) {
 			const query = pcMatch[1] || "";
 			const start = cursor.ch - query.length;
@@ -95,8 +97,48 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 			};
 		}
 
+		// Clock/Event tag: [E: or [Clock:
+		const clockMatch = beforeCursor.match(/\[(E|Clock):([^\]|]*)$/);
+		if (clockMatch) {
+			const query = clockMatch[2] || "";
+			const start = cursor.ch - query.length;
+
+			return {
+				start: { line: cursor.line, ch: start },
+				end: cursor,
+				query,
+			};
+		}
+
+		// Track tag: [Track:
+		const trackMatch = beforeCursor.match(/\[Track:([^\]|]*)$/);
+		if (trackMatch) {
+			const query = trackMatch[1] || "";
+			const start = cursor.ch - query.length;
+
+			return {
+				start: { line: cursor.line, ch: start },
+				end: cursor,
+				query,
+			};
+		}
+
+		// Timer tag: [Timer:
+		const timerMatch = beforeCursor.match(/\[Timer:([^\]|]*)$/);
+		if (timerMatch) {
+			const query = timerMatch[1] || "";
+			const start = cursor.ch - query.length;
+
+			return {
+				start: { line: cursor.line, ch: start },
+				end: cursor,
+				query,
+			};
+		}
+
 		return null;
 	}
+
 
 	/**
 	 * Get suggestions based on current context
@@ -119,19 +161,26 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 		const beforeCursor = line.substring(0, context.end.ch);
 		const query = context.query.toLowerCase();
 
-		// Determine which type of tag we're completing
-		if (beforeCursor.includes("[N:") || beforeCursor.includes("[#N:")) {
+		// Determine which type of tag we're completing using regex to ensure we're at the current tag
+		if (/\[(#)?N:[^\]|]*$/.test(beforeCursor)) {
 			return this.getNPCSuggestions(query);
-		} else if (beforeCursor.includes("[L:")) {
+		} else if (/\[L:[^\]|]*$/.test(beforeCursor)) {
 			return this.getLocationSuggestions(query);
-		} else if (beforeCursor.includes("[Thread:")) {
+		} else if (/\[Thread:[^\]|]*$/.test(beforeCursor)) {
 			return this.getThreadSuggestions(query);
-		} else if (beforeCursor.includes("[PC:")) {
+		} else if (/\[PC:[^\]|]*$/.test(beforeCursor)) {
 			return this.getPCSuggestions(query);
+		} else if (/\[(E|Clock):[^\]|]*$/.test(beforeCursor)) {
+			return this.getProgressSuggestions(query, "clock");
+		} else if (/\[Track:[^\]|]*$/.test(beforeCursor)) {
+			return this.getProgressSuggestions(query, "track");
+		} else if (/\[Timer:[^\]|]*$/.test(beforeCursor)) {
+			return this.getProgressSuggestions(query, "timer");
 		}
 
 		return [];
 	}
+
 
 	/**
 	 * Get NPC suggestions
@@ -230,6 +279,41 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 	}
 
 	/**
+	 * Get progress suggestions (clocks, tracks, timers)
+	 */
+	private getProgressSuggestions(
+		query: string,
+		type: "clock" | "track" | "timer"
+	): TagSuggestion[] {
+		if (!this.parsedElements) return [];
+
+		const suggestions: TagSuggestion[] = [];
+
+		for (const item of this.parsedElements.progress) {
+			if (item.type !== type) continue;
+
+			if (query === "" || item.name.toLowerCase().includes(query)) {
+				let displayText = item.name;
+				if (item.max !== undefined) {
+					displayText += ` [${item.current}/${item.max}]`;
+				} else {
+					displayText += ` [${item.current}]`;
+				}
+
+				suggestions.push({
+					name: item.name,
+					type: item.type as any,
+					current: item.current,
+					max: item.max,
+					displayText,
+				});
+			}
+		}
+
+		return this.sortSuggestions(suggestions, query);
+	}
+
+	/**
 	 * Sort suggestions by relevance
 	 */
 	private sortSuggestions(
@@ -267,18 +351,28 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 		const nameEl = container.createDiv({ cls: "lonelog-suggestion-name" });
 		nameEl.setText(suggestion.name);
 
-		// Tags/state info
+		// Tags/state info or progress info
 		if (suggestion.tags && suggestion.tags.length > 0) {
 			const tagsEl = container.createDiv({
 				cls: "lonelog-suggestion-tags",
 			});
 			tagsEl.setText(suggestion.tags.join(" | "));
+		} else if (suggestion.current !== undefined) {
+			const progressEl = container.createDiv({
+				cls: "lonelog-suggestion-tags",
+			});
+			if (suggestion.max !== undefined) {
+				progressEl.setText(`${suggestion.current} / ${suggestion.max}`);
+			} else {
+				progressEl.setText(`${suggestion.current}`);
+			}
 		}
 
 		// Type indicator
 		const typeEl = container.createDiv({ cls: "lonelog-suggestion-type" });
 		typeEl.setText(suggestion.type.toUpperCase());
 	}
+
 
 	/**
 	 * Handle suggestion selection
@@ -297,7 +391,7 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 		let insertion = "";
 
 		// Check if we're completing a reference [#N:
-		const isReference = beforeCursor.includes("[#N:");
+		const isReference = /\[#\w+:/.test(beforeCursor);
 
 		if (isReference) {
 			// Just close the reference tag
@@ -318,8 +412,22 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 				case "thread":
 					insertion = `${suggestion.name}|Open]`;
 					break;
+				case "clock": {
+					// Detect prefix (E: or Clock:)
+					const prefixMatch = beforeCursor.match(/\[(E|Clock):[^\]|]*$/);
+					const prefix = prefixMatch ? prefixMatch[1] : "Clock";
+					insertion = `${suggestion.name} ${suggestion.current}/${suggestion.max}]`;
+					break;
+				}
+				case "track":
+					insertion = `${suggestion.name} ${suggestion.current}/${suggestion.max}]`;
+					break;
+				case "timer":
+					insertion = `${suggestion.name} ${suggestion.current}]`;
+					break;
 			}
 		}
+
 
 		// Replace the query with the insertion
 		editor.replaceRange(
