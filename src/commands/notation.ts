@@ -285,6 +285,34 @@ export class NotationCommands {
 		}
 	}
 
+	static insertCombatBlock(editor: Editor, settings: LonelogSettings): void {
+		const text = "[COMBAT]\n\n[/COMBAT]";
+		const cursor = editor.getCursor();
+		editor.replaceSelection(text);
+
+		if (settings.smartCursorPositioning) {
+			editor.setCursor({ line: cursor.line + 1, ch: 0 });
+		}
+	}
+
+	static insertRoundMarker(editor: Editor, settings: LonelogSettings): void {
+		const text = "Rd1 ";
+		editor.replaceSelection(text);
+	}
+
+	static insertFoeTag(editor: Editor, settings: LonelogSettings): void {
+		const text = "[F:Name|]";
+		const cursor = editor.getCursor();
+		editor.replaceSelection(text);
+
+		if (settings.smartCursorPositioning) {
+			editor.setSelection(
+				{ line: cursor.line, ch: cursor.ch + 3 },
+				{ line: cursor.line, ch: cursor.ch + 7 }
+			);
+		}
+	}
+
 	/**
 	 * @deprecated Use RollManager.processLine instead. Only kept for backward compatibility if needed within this class.
 	 */

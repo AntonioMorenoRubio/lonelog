@@ -37,11 +37,12 @@ export default {
 		"insert-item-tag": "Insert item tag [I:]",
 		"insert-wealth-tag": "Insert wealth tag [W:]",
 		"roll-dice-on-line": "Roll dice on current line",
-		"show-dashboard": "Show Lonelog Dashboard"
+		"show-dashboard": "Show Lonelog Dashboard",
+		"open-combat-tracker": "Open Combat Tracker"
 	},
 	"settings": {
 		"header": "Lonelog notation settings",
-		"language-section": "Regional Settings",
+		"language-section": "Language",
 		"core-section": "Core notation",
 		"insert-space": "Insert space after symbols",
 		"insert-space-desc": "Add a space after @ ? d: -> => for easier typing",
@@ -55,7 +56,13 @@ export default {
 		"highlight-section": "Syntax highlighting",
 		"enable-editor": "Enable editor highlighting",
 		"enable-editor-desc": "Highlight lonelog notation while editing code blocks",
+		"enable-reading": "Enable reading mode",
 		"enable-reading-desc": "Enable reading mode highlighting in lonelog code blocks",
+		"enable-global": "Enable global notation",
+		"enable-global-desc": "Enable Lonelog syntax and dice outside of code blocks (in paragraphs, lists, etc.)",
+		"addons-section": "Add-ons",
+		"enable-combat": "Combat Add-on",
+		"enable-combat-desc": "Enable tactical combat notation (rounds, combat blocks, and foe tracking)",
 		"enable-dice-roller": "Enable dice roller",
 		"enable-dice-roller-desc": "Show the 🎲 button to roll dice and insert results directly into the document",
 		"dice-detail-mode": "Dice detail mode",
@@ -98,8 +105,21 @@ export default {
 		"color-narrative-desc": "Text color for narrative blocks",
 		"color-scene": "Scene",
 		"color-scene-desc": "Text color for scene markers",
-		"color-session": "Session (Header)",
-		"color-session-desc": "Text color for session headers"
+		"color-round": "Rounds (Rd#)",
+		"color-round-desc": "Text color for combat round markers",
+		"color-combat": "Combat Blocks ([COMBAT])",
+		"color-combat-desc": "Text color for combat block delimiters",
+		"color-foe": "Foe Tags ([F:...])",
+		"color-foe-desc": "Text color for combatant tracking tags",
+		"color-session": "Sessions (=== Session ===)",
+		"color-session-desc": "Text color for session headers",
+		"about-section": "About Lonelog",
+		"about-system": "Lonelog System by Roberto Bisceglie",
+		"about-dev": "Developer Plug-in: Snifer (Bastión del Dinosaurio)",
+		"support-dev": "Support the development",
+		"youtube-link": "YouTube Channel",
+		"paypal-link": "Support via PayPal",
+		"funding-link": "Support on Patreon"
 	},
 	"modals": {
 		"campaign-title": "New campaign header",
@@ -141,6 +161,13 @@ export default {
 		"dungeon-header": "Dungeon status",
 		"inventory-header": "Inventory & wealth",
 		"tags": "Tags",
-		"no-tags": "No tags found"
+		"no-tags": "No tags found",
+		"combat-tracker-title": "Combat Tracker",
+		"no-combat-encounters": "No active combat encounters found.",
+		"active-combat": "Active Combat",
+		"round": "Round",
+		"party": "Party",
+		"foes": "Foes",
+		"combat-finished": "Finished"
 	}
 };

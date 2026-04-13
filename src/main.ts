@@ -10,8 +10,9 @@ import { LonelogAutoComplete } from "./utils/autocomplete";
 import { ProgressTrackerView, PROGRESS_VIEW_TYPE } from "./ui/progress-view";
 import { ThreadBrowserView, THREAD_VIEW_TYPE } from "./ui/thread-view";
 import { SceneNavigatorView, SCENE_NAV_TYPE } from "./ui/scene-nav";
-import { DashboardView, DASHBOARD_VIEW_TYPE } from "./ui/dashboard-view";
-import { lonelogBlockProcessor } from "./utils/reading-highlighter";
+import { DASHBOARD_VIEW_TYPE, DashboardView } from "ui/dashboard-view";
+import { CombatTrackerView, COMBAT_VIEW_TYPE } from "./ui/combat-view";
+import { lonelogBlockProcessor, lonelogGlobalProcessor } from "./utils/reading-highlighter";
 import { lonelogEditorPlugin } from "./utils/editor-highlighter";
 
 export default class LonelogPlugin extends Plugin {
@@ -32,6 +33,13 @@ export default class LonelogPlugin extends Plugin {
 				"lonelog",
 				lonelogBlockProcessor(this.app, this.settings)
 			);
+
+			// Register global notation processor if enabled
+			if (this.settings.enableGlobalNotation) {
+				this.registerMarkdownPostProcessor(
+					lonelogGlobalProcessor(this.app, this.settings)
+				);
+			}
 		}
 
 		applyHighlightColors(this.settings);
@@ -58,12 +66,17 @@ export default class LonelogPlugin extends Plugin {
 			DASHBOARD_VIEW_TYPE,
 			(leaf) => new DashboardView(leaf)
 		);
+		this.registerView(
+			COMBAT_VIEW_TYPE,
+			(leaf) => new CombatTrackerView(leaf)
+		);
 
 		// Detach all views
 		this.app.workspace.detachLeavesOfType(PROGRESS_VIEW_TYPE);
 		this.app.workspace.detachLeavesOfType(THREAD_VIEW_TYPE);
 		this.app.workspace.detachLeavesOfType(SCENE_NAV_TYPE);
 		this.app.workspace.detachLeavesOfType(DASHBOARD_VIEW_TYPE);
+		this.app.workspace.detachLeavesOfType(COMBAT_VIEW_TYPE);
 
 		// Register auto-completion
 		this.autoComplete = new LonelogAutoComplete(this.app);
@@ -253,6 +266,30 @@ export default class LonelogPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+			id: "insert-combat-block",
+			name: t("commands.insert-combat-block"),
+			editorCallback: (editor) => {
+				NotationCommands.insertCombatBlock(editor, this.settings);
+			},
+		});
+
+		this.addCommand({
+			id: "insert-round-marker",
+			name: t("commands.insert-round-marker"),
+			editorCallback: (editor) => {
+				NotationCommands.insertRoundMarker(editor, this.settings);
+			},
+		});
+
+		this.addCommand({
+			id: "insert-foe-tag",
+			name: t("commands.insert-foe-tag"),
+			editorCallback: (editor) => {
+				NotationCommands.insertFoeTag(editor, this.settings);
+			},
+		});
+
 		// Phase 2: Template commands
 		this.addCommand({
 			id: "insert-campaign-header",
@@ -345,6 +382,14 @@ export default class LonelogPlugin extends Plugin {
 			name: t("commands.show-dashboard"),
 			callback: () => {
 				void this.activateView(DASHBOARD_VIEW_TYPE);
+			},
+		});
+
+		this.addCommand({
+			id: "show-combat-tracker",
+			name: t("commands.open-combat-tracker"),
+			callback: () => {
+				void this.activateView(COMBAT_VIEW_TYPE);
 			},
 		});
 	}

@@ -27,7 +27,9 @@ export interface LonelogSettings {
 	// Highlighting settings
 	enableEditorHighlighting: boolean;
 	enableReadingHighlighting: boolean;
+	enableGlobalNotation: boolean;
 	enableDiceRoller: boolean;
+	enableCombatAddon: boolean;
 
 	// Dice roller output settings
 	diceDetailMode: boolean;   // Show individual dice values instead of sum
@@ -50,6 +52,9 @@ export interface LonelogSettings {
 	colorGenerator: string;   // gen: — teal
 	colorScene: string;       // Scene — user-defined
 	colorHeader: string;      // Header — user-defined
+	colorRound: string;       // Rd# — user-defined
+	colorCombatBlock: string; // [COMBAT] — user-defined
+	colorFoe: string;         // [F:...] — user-defined
 	locale: string;           // Interface language
 }
 
@@ -61,11 +66,11 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 	autoWrapInCodeBlock: false,
 
 	// Phase 3 Defaults
-	defaultRuleset: "Loner + Mythic Oracle",
-	defaultGenre: "Fantasy",
-	defaultPlayer: "Player 1",
-	defaultThemes: "Exploration, Adventure",
-	defaultTone: "Heroic",
+	defaultRuleset: " ",
+	defaultGenre: "",
+	defaultPlayer: "",
+	defaultThemes: "",
+	defaultTone: "",
 	autoUpdateLastUpdate: true,
 
 	actionSequenceTemplate: "@ [action]\nd: [roll] -> [outcome]\n=> [consequence]",
@@ -74,7 +79,9 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 	// Highlighting toggles
 	enableEditorHighlighting: true,
 	enableReadingHighlighting: true,
+	enableGlobalNotation: false,
 	enableDiceRoller: true,
+	enableCombatAddon: false,
 
 	// Dice output defaults
 	diceDetailMode: false,
@@ -97,6 +104,9 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 	colorGenerator: "#0d9488",  // teal
 	colorScene: "#3b82f6", // default blue
 	colorHeader: "#3b82f6", // default blue
+	colorRound: "#22c55e",  // default green
+	colorCombatBlock: "#ef4444", // default red
+	colorFoe: "#c2410c",    // default orange
 	locale: "en",
 };
 
@@ -115,6 +125,9 @@ export function applyHighlightColors(settings: LonelogSettings): void {
 	document.body.style.setProperty("--ll-generator-color", settings.colorGenerator);
 	document.body.style.setProperty("--ll-scene-color", settings.colorScene);
 	document.body.style.setProperty("--ll-header-color", settings.colorHeader);
+	document.body.style.setProperty("--ll-round-color", settings.colorRound);
+	document.body.style.setProperty("--ll-combat-color", settings.colorCombatBlock);
+	document.body.style.setProperty("--ll-foe-color", settings.colorFoe);
 }
 
 /** Removes the injected CSS custom properties (call from onunload). */
@@ -132,6 +145,9 @@ export function removeHighlightColors(): void {
 	document.body.style.removeProperty("--ll-generator-color");
 	document.body.style.removeProperty("--ll-scene-color");
 	document.body.style.removeProperty("--ll-header-color");
+	document.body.style.removeProperty("--ll-round-color");
+	document.body.style.removeProperty("--ll-combat-color");
+	document.body.style.removeProperty("--ll-foe-color");
 }
 
 // ---------------------------------------------------------------------------
@@ -154,6 +170,9 @@ interface ColorDef {
 		| "colorGenerator"
 		| "colorScene"
 		| "colorHeader"
+		| "colorRound"
+		| "colorCombatBlock"
+		| "colorFoe"
 	>;
 	label: string;
 	desc: string;
@@ -173,6 +192,9 @@ const COLOR_DEFS: ColorDef[] = [
 	{ key: "colorGenerator", label: t("settings.color-generator"), desc: t("settings.color-generator-desc") },
 	{ key: "colorScene", label: t("settings.color-scene"), desc: t("settings.color-scene-desc") },
 	{ key: "colorHeader", label: t("settings.color-session"), desc: t("settings.color-session-desc") },
+	{ key: "colorRound", label: t("settings.color-round"), desc: t("settings.color-round-desc") },
+	{ key: "colorCombatBlock", label: t("settings.color-combat"), desc: t("settings.color-combat-desc") },
+	{ key: "colorFoe", label: t("settings.color-foe"), desc: t("settings.color-foe-desc") },
 ];
 
 export class LonelogSettingTab extends PluginSettingTab {
@@ -186,6 +208,49 @@ export class LonelogSettingTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
+
+
+		// ── About & Credits ────────────────────────────────────────────────
+		new Setting(containerEl).setName(t("settings.about-section")).setHeading();
+
+		const aboutDesc = containerEl.createDiv({ cls: "lonelog-about-container" });
+
+		const systemRow = aboutDesc.createDiv({ cls: "lonelog-about-row" });
+		systemRow.createSpan({ text: "🖋️ " });
+		systemRow.createEl("a", {
+			text: t("settings.about-system"),
+			href: "https://zeruhur.itch.io/lonelog",
+			cls: "lonelog-about-text"
+		});
+
+		const devRow = aboutDesc.createDiv({ cls: "lonelog-about-row" });
+		devRow.createSpan({ text: "💻 " });
+		devRow.createSpan({ text: t("settings.about-dev"), cls: "lonelog-about-text" });
+
+		const linksCol = aboutDesc.createDiv({ cls: "lonelog-about-links" });
+
+		linksCol.createEl("a", {
+			text: t("settings.youtube-link"),
+			href: "https://www.youtube.com/@BastiondelDinosaurio",
+			cls: "lonelog-about-link"
+		});
+
+		linksCol.createSpan({ text: " • ", cls: "lonelog-link-separator" });
+
+		linksCol.createEl("a", {
+			text: t("settings.paypal-link"),
+			href: "https://paypal.me/sniferl4bs",
+			cls: "lonelog-about-link"
+		});
+
+		linksCol.createSpan({ text: " • ", cls: "lonelog-link-separator" });
+
+		linksCol.createEl("a", {
+			text: t("settings.funding-link"),
+			href: "https://www.patreon.com/c/BastiondelDinosaurio",
+			cls: "lonelog-about-link"
+		});
+
 
 		// ── Interface / Language ───────────────────────────────────────────
 		new Setting(containerEl).setName(t("settings.language-section")).setHeading();
@@ -205,6 +270,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 						this.display(); // Refresh tab to update labels
 					})
 			);
+
 
 		// ── Core Notation ──────────────────────────────────────────────────
 		new Setting(containerEl).setName(t("settings.core-section")).setHeading();
@@ -374,6 +440,33 @@ export class LonelogSettingTab extends PluginSettingTab {
 					})
 			);
 
+		new Setting(containerEl)
+			.setName(t("settings.enable-global"))
+			.setDesc(t("settings.enable-global-desc"))
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.enableGlobalNotation)
+					.onChange(async (value) => {
+						this.plugin.settings.enableGlobalNotation = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		// ── Add-ons ────────────────────────────────────────────────────────
+		new Setting(containerEl).setName(t("settings.addons-section")).setHeading();
+
+		new Setting(containerEl)
+			.setName(t("settings.enable-combat"))
+			.setDesc(t("settings.enable-combat-desc"))
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.enableCombatAddon)
+					.onChange(async (value) => {
+						this.plugin.settings.enableCombatAddon = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
 		// ── Extras & Interactive Tools ─────────────────────────────────────
 		new Setting(containerEl).setName(t("settings.extras-section")).setHeading();
 
@@ -460,6 +553,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 		for (const def of COLOR_DEFS) {
 			this.addColorSetting(containerEl, def);
 		}
+
 	}
 
 	private addColorSetting(containerEl: HTMLElement, def: ColorDef): void {

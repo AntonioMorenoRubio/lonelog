@@ -57,6 +57,22 @@ export interface ParsedSession {
 	scenes: ParsedScene[];
 }
 
+export interface ParsedCombatant {
+	name: string;
+	type: "pc" | "foe";
+	stats: string[];
+	line: number;
+}
+
+export interface ParsedCombatEncounter {
+	id: string; // encounter start line
+	startLine: number;
+	endLine?: number;
+	currentRound: number;
+	combatants: Map<string, ParsedCombatant>;
+	isClosed: boolean;
+}
+
 export interface ParsedElements {
 	npcs: Map<string, ParsedNPC>;
 	locations: Map<string, ParsedLocation>;
@@ -64,6 +80,7 @@ export interface ParsedElements {
 	pcs: Map<string, ParsedPC>;
 	progress: ParsedProgress[];
 	sessions: ParsedSession[];
+	combat: ParsedCombatEncounter[];
 }
 
 export class NotationParser {
@@ -88,8 +105,9 @@ export class NotationParser {
 		const pcs = this.parsePCs(content);
 		const progress = this.parseProgress(content);
 		const sessions = this.parseSessions(content);
+		const combat = this.parseCombatEncounters(content);
 
-		const result = { npcs, locations, threads, pcs, progress, sessions };
+		const result = { npcs, locations, threads, pcs, progress, sessions, combat };
 
 		// Update cache
 		this.cache = { content, result };
@@ -419,6 +437,92 @@ export class NotationParser {
 		}
 
 		return sessions;
+	}
+
+	/**
+	 * Parse combat encounters: [COMBAT], [/COMBAT], Rd#, [F:], [PC:]
+	 */
+	private static parseCombatEncounters(content: string): ParsedCombatEncounter[] {
+		const lines = content.split("\n");
+		const encounters: ParsedCombatEncounter[] = [];
+		let currentEncounter: ParsedCombatEncounter | null = null;
+
+		lines.forEach((line, index) => {
+			const trimmed = line.trim();
+
+			// Detect Combat start or block start
+			// Supports both [COMBAT] on its own or ### scene header [COMBAT]
+			const combatStartMatch = line.match(/\[COMBAT\]/i);
+			if (combatStartMatch) {
+				// If already in an encounter, close the previous one
+				if (currentEncounter) {
+					currentEncounter.endLine = index - 1;
+					currentEncounter.isClosed = true;
+					encounters.push(currentEncounter);
+				}
+
+				currentEncounter = {
+					id: `combat-${index}`,
+					startLine: index,
+					currentRound: 1,
+					combatants: new Map<string, ParsedCombatant>(),
+					isClosed: false,
+				};
+				return;
+			}
+
+			// Detect Combat end
+			if (line.match(/\[\/COMBAT\]/i) && currentEncounter) {
+				currentEncounter.endLine = index;
+				currentEncounter.isClosed = true;
+				encounters.push(currentEncounter);
+				currentEncounter = null;
+				return;
+			}
+
+			// If in a combat block, parse rounds and combatants
+			if (currentEncounter) {
+				// Round markers: Rd1, Rd2
+				const roundMatch = line.match(/^Rd(\d+)\b/i);
+				if (roundMatch && roundMatch[1]) {
+					currentEncounter.currentRound = parseInt(roundMatch[1]);
+				}
+
+				// Combatant tags: [F:...] and [PC:...]
+				// We'll scan the whole line for multiple tags
+				const tagRegex = /\[(PC|F):([^\]|]+)(?:\|([^\]]*))?\]/gi;
+				let m;
+				while ((m = tagRegex.exec(line)) !== null) {
+					if (!m[1] || !m[2]) continue;
+					const type = m[1].toUpperCase() === "PC" ? "pc" : "foe";
+					const name = m[2].trim();
+					const statsStr = m[3] || "";
+					const stats = statsStr.split("|").map(s => s.trim()).filter(s => s);
+
+					// In combat, we care about the LATEST stats for a name in this encounter
+					currentEncounter.combatants.set(name, {
+						name,
+						type,
+						stats,
+						line: index
+					});
+				}
+
+				// Also detect if a new scene/session starts, which closes header-level combat
+				if (line.match(/^#{2,3}\s+/) && currentEncounter.startLine !== index) {
+					currentEncounter.endLine = index - 1;
+					currentEncounter.isClosed = true;
+					encounters.push(currentEncounter);
+					currentEncounter = null;
+				}
+			}
+		});
+
+		if (currentEncounter) {
+			encounters.push(currentEncounter);
+		}
+
+		return encounters;
 	}
 
 	/**

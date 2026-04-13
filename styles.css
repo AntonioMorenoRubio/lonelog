@@ -561,6 +561,24 @@ If your plugin does not need CSS, delete this file.
 	font-weight: 600;
 }
 
+.ll-round {
+	color: var(--ll-round-color, #22c55e);
+	font-weight: 800;
+	border-bottom: 2px solid var(--ll-round-color, #22c55e);
+	padding-bottom: 1px;
+}
+
+.ll-combat-block {
+	color: var(--ll-combat-color, #ef4444);
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+
+.ll-foe {
+	color: var(--ll-foe-color, #c2410c);
+	font-weight: 600;
+}
+
 /* ── Dark theme adjustments ───────────────────────────────── */
 
 .theme-dark .ll-action {
@@ -606,6 +624,7 @@ If your plugin does not need CSS, delete this file.
 .theme-dark .ll-header {
 	color: var(--ll-question-color, #a78bfa);
 }
+
 /* ============================================================
    Lonelog Editor Highlighting (live preview)
    Token-level highlighting only (not line backgrounds).
@@ -687,16 +706,21 @@ If your plugin does not need CSS, delete this file.
 }
 
 .ll-ed-round {
-	color: var(--ll-dice-color, #22c55e);
+	color: var(--ll-round-color, #22c55e);
 	font-weight: 800;
-	border-bottom: 2px solid var(--ll-dice-color, #22c55e);
+	border-bottom: 2px solid var(--ll-round-color, #22c55e);
 	padding-bottom: 1px;
 }
 
-.ll-ed-combat {
-	color: var(--ll-consequence-color, #ef4444);
+.ll-ed-combat-block {
+	color: var(--ll-combat-color, #ef4444);
 	font-weight: 700;
 	letter-spacing: 1px;
+}
+
+.ll-ed-foe {
+	color: var(--ll-foe-color, #c2410c);
+	font-weight: 600;
 }
 
 .ll-ed-dungeon {
@@ -749,7 +773,8 @@ If your plugin does not need CSS, delete this file.
 	margin-left: 4px;
 }
 
-.lonelog-roll-item, .lonelog-table-item {
+.lonelog-roll-item,
+.lonelog-table-item {
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
@@ -916,35 +941,83 @@ If your plugin does not need CSS, delete this file.
 	color: var(--text-normal);
 	text-align: center;
 	background: var(--background-primary);
-	box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+	box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
 	border-radius: 12px;
 	backface-visibility: hidden;
 }
 
 /* Face positions */
-.face-1 { transform: rotateY(0deg) translateZ(50px); }
-.face-2 { transform: rotateY(180deg) translateZ(50px); }
-.face-3 { transform: rotateY(90deg) translateZ(50px); }
-.face-4 { transform: rotateY(-90deg) translateZ(50px); }
-.face-5 { transform: rotateX(90deg) translateZ(50px); }
-.face-6 { transform: rotateX(-90deg) translateZ(50px); }
+.face-1 {
+	transform: rotateY(0deg) translateZ(50px);
+}
+
+.face-2 {
+	transform: rotateY(180deg) translateZ(50px);
+}
+
+.face-3 {
+	transform: rotateY(90deg) translateZ(50px);
+}
+
+.face-4 {
+	transform: rotateY(-90deg) translateZ(50px);
+}
+
+.face-5 {
+	transform: rotateX(90deg) translateZ(50px);
+}
+
+.face-6 {
+	transform: rotateX(-90deg) translateZ(50px);
+}
 
 /* Animation Keyframes */
 @keyframes lonelog-rolling {
-	0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-	25% { transform: rotateX(150deg) rotateY(150deg) rotateZ(150deg); }
-	50% { transform: rotateX(300deg) rotateY(300deg) rotateZ(300deg); }
-	75% { transform: rotateX(450deg) rotateY(450deg) rotateZ(450deg); }
-	100% { transform: rotateX(600deg) rotateY(600deg) rotateZ(600deg); }
+	0% {
+		transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+	}
+
+	25% {
+		transform: rotateX(150deg) rotateY(150deg) rotateZ(150deg);
+	}
+
+	50% {
+		transform: rotateX(300deg) rotateY(300deg) rotateZ(300deg);
+	}
+
+	75% {
+		transform: rotateX(450deg) rotateY(450deg) rotateZ(450deg);
+	}
+
+	100% {
+		transform: rotateX(600deg) rotateY(600deg) rotateZ(600deg);
+	}
 }
 
 /* Result orientations */
-.show-1 { transform: rotateY(0deg); }
-.show-2 { transform: rotateY(-180deg); }
-.show-3 { transform: rotateY(-90deg); }
-.show-4 { transform: rotateY(90deg); }
-.show-5 { transform: rotateX(-90deg); }
-.show-6 { transform: rotateX(90deg); }
+.show-1 {
+	transform: rotateY(0deg);
+}
+
+.show-2 {
+	transform: rotateY(-180deg);
+}
+
+.show-3 {
+	transform: rotateY(-90deg);
+}
+
+.show-4 {
+	transform: rotateY(90deg);
+}
+
+.show-5 {
+	transform: rotateX(-90deg);
+}
+
+.show-6 {
+	transform: rotateX(90deg);
+}
 
 .lonelog-dice-result-text {
 	position: absolute;
@@ -952,231 +1025,419 @@ If your plugin does not need CSS, delete this file.
 	font-size: 2em;
 	font-weight: bold;
 	color: var(--text-accent);
-	text-shadow: 0 0 10px rgba(0,0,0,0.5);
+	text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 	animation: lonelog-pop-in 0.3s ease-out;
 }
 
 @keyframes lonelog-pop-in {
-	0% { transform: scale(0); opacity: 0; }
-	100% { transform: scale(1.2); opacity: 1; }
+	0% {
+		transform: scale(0);
+		opacity: 0;
+	}
+
+	100% {
+		transform: scale(1.2);
+		opacity: 1;
+	}
 }
 
 /* DASHBOARD STYLES */
 .lonelog-dashboard-container {
-    padding: 2rem;
-    height: 100%;
-    overflow-y: auto;
-    background-color: var(--background-primary);
+	padding: 2rem;
+	height: 100%;
+	overflow-y: auto;
+	background-color: var(--background-primary);
 }
 
 .ll-dashboard-header {
-    margin-bottom: 2rem;
-    border-bottom: 1px solid var(--background-modifier-border);
-    padding-bottom: 1.5rem;
+	margin-bottom: 2rem;
+	border-bottom: 1px solid var(--background-modifier-border);
+	padding-bottom: 1.5rem;
 }
 
 .ll-header-title-row h1 {
-    margin: 0 0 1rem 0;
-    font-size: 2.2rem;
-    font-weight: 800;
-    background: linear-gradient(90deg, var(--text-normal) 0%, var(--text-muted) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+	margin: 0 0 1rem 0;
+	font-size: 2.2rem;
+	font-weight: 800;
+	background: linear-gradient(90deg, var(--text-normal) 0%, var(--text-muted) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
 .ll-header-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 1rem;
 }
 
 .ll-stat-card {
-    background-color: var(--background-secondary);
-    padding: 1rem;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 1px solid var(--background-modifier-border);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+	background-color: var(--background-secondary);
+	padding: 1rem;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid var(--background-modifier-border);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ll-stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .ll-stat-value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--text-accent);
+	font-size: 1.8rem;
+	font-weight: 700;
+	color: var(--text-accent);
 }
 
 .ll-stat-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--text-muted);
 }
 
 .ll-dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr;
-    gap: 2rem;
+	display: grid;
+	grid-template-columns: 1fr 1.5fr;
+	gap: 2rem;
 }
 
 @media (max-width: 900px) {
-    .ll-dashboard-grid {
-        grid-template-columns: 1fr;
-    }
+	.ll-dashboard-grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 .ll-dashboard-section h2 {
-    font-size: 1.2rem;
-    margin-bottom: 1.2rem;
-    border-left: 4px solid var(--text-accent);
-    padding-left: 0.8rem;
+	font-size: 1.2rem;
+	margin-bottom: 1.2rem;
+	border-left: 4px solid var(--text-accent);
+	padding-left: 0.8rem;
 }
 
 /* Timeline */
 .ll-timeline-list {
-    position: relative;
-    padding-left: 1rem;
+	position: relative;
+	padding-left: 1rem;
 }
 
 .ll-timeline-session {
-    margin-bottom: 2rem;
-    position: relative;
+	margin-bottom: 2rem;
+	position: relative;
 }
 
 .ll-timeline-session::before {
-    content: '';
-    position: absolute;
-    left: -1rem;
-    top: 0;
-    bottom: -2rem;
-    width: 2px;
-    background-color: var(--background-modifier-border);
+	content: '';
+	position: absolute;
+	left: -1rem;
+	top: 0;
+	bottom: -2rem;
+	width: 2px;
+	background-color: var(--background-modifier-border);
 }
 
 .ll-timeline-session:last-child::before {
-    bottom: 0;
+	bottom: 0;
 }
 
 .ll-timeline-session-header {
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.8rem;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    background-color: var(--background-secondary-alt);
+	cursor: pointer;
+	font-weight: bold;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.8rem;
+	padding: 0.4rem 0.8rem;
+	border-radius: 4px;
+	background-color: var(--background-secondary-alt);
 }
 
 .ll-timeline-session-header:hover {
-    background-color: var(--background-modifier-hover);
+	background-color: var(--background-modifier-hover);
 }
 
 .ll-timeline-scene-item {
-    display: flex;
-    gap: 0.8rem;
-    padding: 0.6rem 0.8rem;
-    margin-left: 0.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.1s ease;
-    border-left: 2px solid transparent;
+	display: flex;
+	gap: 0.8rem;
+	padding: 0.6rem 0.8rem;
+	margin-left: 0.5rem;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.1s ease;
+	border-left: 2px solid transparent;
 }
 
 .ll-timeline-scene-item:hover {
-    background-color: var(--background-modifier-hover);
-    border-left-color: var(--text-accent);
+	background-color: var(--background-modifier-hover);
+	border-left-color: var(--text-accent);
 }
 
 .ll-scene-num-badge {
-    color: var(--text-accent);
-    font-weight: bold;
-    font-size: 0.9rem;
-    min-width: 30px;
+	color: var(--text-accent);
+	font-weight: bold;
+	font-size: 0.9rem;
+	min-width: 30px;
 }
 
 /* Progress Bars */
 .ll-progress-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1rem;
+	margin-bottom: 2rem;
 }
 
 .ll-progress-card {
-    background-color: var(--background-secondary);
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--background-modifier-border);
+	background-color: var(--background-secondary);
+	padding: 1rem;
+	border-radius: 8px;
+	border: 1px solid var(--background-modifier-border);
 }
 
 .ll-progress-name {
-    font-weight: 600;
-    margin-bottom: 0.8rem;
-    font-size: 0.95rem;
+	font-weight: 600;
+	margin-bottom: 0.8rem;
+	font-size: 0.95rem;
 }
 
 .ll-progress-bar-container {
-    height: 8px;
-    background-color: var(--background-modifier-border);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 0.4rem;
+	height: 8px;
+	background-color: var(--background-modifier-border);
+	border-radius: 4px;
+	overflow: hidden;
+	margin-bottom: 0.4rem;
 }
 
 .ll-progress-bar-fill {
-    height: 100%;
-    background-color: var(--text-accent);
-    border-radius: 4px;
+	height: 100%;
+	background-color: var(--text-accent);
+	border-radius: 4px;
 }
 
-.ll-type-clock .ll-progress-bar-fill { background-color: #f43f5e; }
-.ll-type-track .ll-progress-bar-fill { background-color: #10b981; }
-.ll-type-timer .ll-progress-bar-fill { background-color: #3b82f6; }
+.ll-type-clock .ll-progress-bar-fill {
+	background-color: #f43f5e;
+}
+
+.ll-type-track .ll-progress-bar-fill {
+	background-color: #10b981;
+}
+
+.ll-type-timer .ll-progress-bar-fill {
+	background-color: #3b82f6;
+}
 
 /* Entities */
 .ll-entity-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 1rem;
 }
 
 .ll-entity-card {
-    background-color: var(--background-secondary);
-    padding: 1rem;
-    border-radius: 8px;
-    border-bottom: 3px solid var(--text-accent);
-    cursor: pointer;
+	background-color: var(--background-secondary);
+	padding: 1rem;
+	border-radius: 8px;
+	border-bottom: 3px solid var(--text-accent);
+	cursor: pointer;
 }
 
 .ll-entity-card:hover {
-    background-color: var(--background-modifier-hover);
+	background-color: var(--background-modifier-hover);
 }
 
 .ll-tag-badge {
-    background-color: var(--background-modifier-border);
-    font-size: 0.75rem;
-    padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-    margin-right: 0.3rem;
-    display: inline-block;
-    margin-top: 0.4rem;
+	background-color: var(--background-modifier-border);
+	font-size: 0.75rem;
+	padding: 0.1rem 0.4rem;
+	border-radius: 4px;
+	margin-right: 0.3rem;
+	display: inline-block;
+	margin-top: 0.4rem;
 }
 
 .ll-thread-status {
-    font-size: 0.75rem;
-    padding: 0.1rem 0.5rem;
-    border-radius: 12px;
-    text-transform: uppercase;
-    font-weight: bold;
+	font-size: 0.75rem;
+	padding: 0.1rem 0.5rem;
+	border-radius: 12px;
+	text-transform: uppercase;
+	font-weight: bold;
 }
 
-.ll-status-open { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
-.ll-status-closed { background-color: rgba(107, 114, 128, 0.2); color: #6b7280; }
+.ll-status-open {
+	background-color: rgba(16, 185, 129, 0.2);
+	color: #10b981;
+}
+
+.ll-status-closed {
+	background-color: rgba(107, 114, 128, 0.2);
+	color: #6b7280;
+}
+
+/* Combat Tracker View Styles */
+.lonelog-combat-container {
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.lonelog-combat-header {
+	border-bottom: 1px solid var(--background-modifier-border);
+	padding-bottom: 0.8rem;
+}
+
+.lonelog-combat-title-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.5rem;
+}
+
+.lonelog-combat-title-row h4 {
+	margin: 0;
+	font-size: 1.1rem;
+}
+
+.lonelog-combat-status-finished {
+	font-size: 0.7rem;
+	background-color: var(--background-modifier-border);
+	color: var(--text-muted);
+	padding: 2px 6px;
+	border-radius: 4px;
+	text-transform: uppercase;
+}
+
+.lonelog-round-badge {
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+	padding: 0.2rem 0.6rem;
+	border-radius: 12px;
+	font-size: 0.85rem;
+	font-weight: bold;
+}
+
+.lonelog-combat-section {
+	margin-bottom: 1rem;
+}
+
+.lonelog-combat-section h5 {
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--text-muted);
+	margin: 0 0 0.8rem 0;
+	border-bottom: 1px solid var(--background-modifier-border-faint);
+	padding-bottom: 0.2rem;
+}
+
+.lonelog-combatant-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+.lonelog-combatant-card {
+	background-color: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	padding: 0.8rem;
+	transition: transform 0.1s ease, border-color 0.1s ease;
+}
+
+.lonelog-combatant-card:hover {
+	border-color: var(--text-accent);
+	transform: translateX(2px);
+}
+
+.lonelog-combatant-pc {
+	border-left: 3px solid var(--ll-action-color, #3b82f6);
+}
+
+.lonelog-combatant-foe {
+	border-left: 3px solid var(--ll-foe-color, #ef4444);
+}
+
+.lonelog-combatant-name-row {
+	margin-bottom: 0.5rem;
+}
+
+.lonelog-combatant-name {
+	background: none;
+	border: none;
+	padding: 0;
+	font-weight: 600;
+	color: var(--text-normal);
+	cursor: pointer;
+	text-align: left;
+	font-size: 0.95rem;
+}
+
+.lonelog-combatant-name:hover {
+	color: var(--text-accent);
+	text-decoration: underline;
+}
+
+.lonelog-combatant-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+}
+
+.lonelog-stat-tag {
+	font-size: 0.75rem;
+	background-color: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	padding: 1px 6px;
+	border-radius: 4px;
+	color: var(--text-muted);
+	font-family: var(--font-monospace);
+}
+
+.lonelog-combatant-card:hover .lonelog-stat-tag {
+	border-color: var(--background-modifier-border-hover);
+	color: var(--text-normal);
+}
+
+/* About Section Styles */
+.lonelog-about-container {
+	padding: 0.5rem 0;
+	margin-top: 0.2rem;
+}
+
+.lonelog-about-row {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-bottom: 0.3rem;
+}
+
+.lonelog-about-text {
+	font-size: 0.45rem;
+	color: var(--text-normal);
+}
+
+.lonelog-about-links {
+	margin-top: 0.6rem;
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.lonelog-about-link {
+	color: var(--text-accent);
+	text-decoration: none;
+	font-size: 0.5rem;
+	font-weight: 500;
+}
+
+.lonelog-about-link:hover {
+	text-decoration: underline;
+	color: var(--text-accent-hover);
+}
+
+.lonelog-link-separator {
+	color: var(--text-muted);
+}

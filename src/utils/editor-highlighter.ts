@@ -140,70 +140,32 @@ function buildDecorations(view: EditorView, settings: LonelogSettings): Decorati
 	const builder = new RangeSetBuilder<Decoration>();
 	const decorations: Array<Range<Decoration>> = [];
 
-	// Obtain all blocks in the document
-	const allBlocks = findLonelogBlocks(view.state);
+	const allBlocks = settings.enableGlobalNotation ? [] : findLonelogBlocks(view.state);
 
 	for (const { from, to } of view.visibleRanges) {
-		// Filter blocks that overlap with the visible range
-		const visibleBlocks = allBlocks.filter(b => b.to >= from && b.from <= to);
-
-		for (const block of visibleBlocks) {
-			const doc = view.state.doc;
-			const startLine = doc.lineAt(Math.max(block.from, from)).number;
-			const endLine = doc.lineAt(Math.min(block.to, to)).number;
-
+		const doc = view.state.doc;
+		
+		if (settings.enableGlobalNotation) {
+			// Process everything in the visible range
+			const startLine = doc.lineAt(from).number;
+			const endLine = doc.lineAt(to).number;
+			
 			for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
 				const line = doc.line(lineNum);
-				if (line.from < block.from || line.to > block.to) continue;
+				processLineDecorations(line, decorations, settings);
+			}
+		} else {
+			// Filter blocks that overlap with the visible range
+			const visibleBlocks = allBlocks.filter(b => b.to >= from && b.from <= to);
 
-				const lineText = line.text;
+			for (const block of visibleBlocks) {
+				const startLine = doc.lineAt(Math.max(block.from, from)).number;
+				const endLine = doc.lineAt(Math.min(block.to, to)).number;
 
-				// Add line decoration for text wrapping
-				decorations.push({
-					from: line.from,
-					to: line.from,
-					value: Decoration.line({ class: "ll-ed-line" }),
-				});
-
-				// Tokenize using shared logic
-				const tokens = tokenizeLine(lineText);
-
-				// Convert tokens to CM6 decorations
-				for (const token of tokens) {
-					if (token.type === "text") continue; // Skip plain text
-
-					const cssClass = getTokenClass(token.type, "ll-ed");
-					if (!cssClass) continue;
-
-					decorations.push({
-						from: line.from + token.start,
-						to: line.from + token.end,
-						value: Decoration.mark({ class: cssClass }),
-					});
-				}
-
-				// Check for rollable line (d:, ?, tbl:, or gen:)
-				const trimmedLine = lineText.trimStart().toLowerCase();
-				if (
-					settings.enableDiceRoller &&
-					(trimmedLine.startsWith("d:") ||
-						trimmedLine.startsWith("?") ||
-						trimmedLine.startsWith("tbl:") ||
-						trimmedLine.startsWith("gen:") ||
-						lineText.startsWith(" ") || 
-						lineText.startsWith("\t"))
-				) {
-					const notation = DiceRoller.extractNotation(lineText);
-					if (notation) {
-						decorations.push({
-							from: line.to,
-							to: line.to,
-							value: Decoration.widget({
-								widget: new DiceWidget(notation, settings),
-								side: 1,
-							}),
-						});
-					}
+				for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
+					const line = doc.line(lineNum);
+					if (line.from < block.from || line.to > block.to) continue;
+					processLineDecorations(line, decorations, settings);
 				}
 			}
 		}
@@ -215,6 +177,65 @@ function buildDecorations(view: EditorView, settings: LonelogSettings): Decorati
 	}
 
 	return builder.finish();
+}
+
+/**
+ * Helper to process decorations for a single line.
+ */
+function processLineDecorations(
+	line: { from: number; to: number; text: string },
+	decorations: Array<Range<Decoration>>,
+	settings: LonelogSettings
+): void {
+	const lineText = line.text;
+
+	// Add line decoration for text wrapping
+	decorations.push({
+		from: line.from,
+		to: line.from,
+		value: Decoration.line({ class: "ll-ed-line" }),
+	});
+
+	// Tokenize using shared logic
+	const tokens = tokenizeLine(lineText);
+
+	// Convert tokens to CM6 decorations
+	for (const token of tokens) {
+		if (token.type === "text") continue; // Skip plain text
+
+		const cssClass = getTokenClass(token.type, "ll-ed");
+		if (!cssClass) continue;
+
+		decorations.push({
+			from: line.from + token.start,
+			to: line.from + token.end,
+			value: Decoration.mark({ class: cssClass }),
+		});
+	}
+
+	// Check for rollable line (d:, ?, tbl:, or gen:)
+	const trimmedLine = lineText.trimStart().toLowerCase();
+	if (
+		settings.enableDiceRoller &&
+		(trimmedLine.startsWith("d:") ||
+			trimmedLine.startsWith("?") ||
+			trimmedLine.startsWith("tbl:") ||
+			trimmedLine.startsWith("gen:") ||
+			lineText.startsWith(" ") || 
+			lineText.startsWith("\t"))
+	) {
+		const notation = DiceRoller.extractNotation(lineText);
+		if (notation) {
+			decorations.push({
+				from: line.to,
+				to: line.to,
+				value: Decoration.widget({
+					widget: new DiceWidget(notation, settings),
+					side: 1,
+				}),
+			});
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------
