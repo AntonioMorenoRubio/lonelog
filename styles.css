@@ -1061,6 +1061,7 @@ If your plugin does not need CSS, delete this file.
 	font-weight: 800;
 	background: linear-gradient(90deg, var(--text-normal) 0%, var(--text-muted) 100%);
 	-webkit-background-clip: text;
+	background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 

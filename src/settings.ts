@@ -56,6 +56,7 @@ export interface LonelogSettings {
 	colorCombatBlock: string; // [COMBAT] — user-defined
 	colorFoe: string;         // [F:...] — user-defined
 	locale: string;           // Interface language
+	defaultRibbonView: string; // View to open when ribbon is clicked
 }
 
 export const DEFAULT_SETTINGS: LonelogSettings = {
@@ -108,6 +109,7 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 	colorCombatBlock: "#ef4444", // default red
 	colorFoe: "#c2410c",    // default orange
 	locale: "en",
+	defaultRibbonView: "",
 };
 
 /** Sets Lonelog CSS custom properties on document.body */
@@ -209,12 +211,11 @@ export class LonelogSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-
 		// ── About & Credits ────────────────────────────────────────────────
 		new Setting(containerEl).setName(t("settings.about-section")).setHeading();
-
+		
 		const aboutDesc = containerEl.createDiv({ cls: "lonelog-about-container" });
-
+		
 		const systemRow = aboutDesc.createDiv({ cls: "lonelog-about-row" });
 		systemRow.createSpan({ text: "🖋️ " });
 		systemRow.createEl("a", {
@@ -222,21 +223,21 @@ export class LonelogSettingTab extends PluginSettingTab {
 			href: "https://zeruhur.itch.io/lonelog",
 			cls: "lonelog-about-text"
 		});
-
+		
 		const devRow = aboutDesc.createDiv({ cls: "lonelog-about-row" });
 		devRow.createSpan({ text: "💻 " });
 		devRow.createSpan({ text: t("settings.about-dev"), cls: "lonelog-about-text" });
-
+		
 		const linksCol = aboutDesc.createDiv({ cls: "lonelog-about-links" });
-
+		
 		linksCol.createEl("a", {
 			text: t("settings.youtube-link"),
 			href: "https://www.youtube.com/@BastiondelDinosaurio",
 			cls: "lonelog-about-link"
 		});
-
+		
 		linksCol.createSpan({ text: " • ", cls: "lonelog-link-separator" });
-
+		
 		linksCol.createEl("a", {
 			text: t("settings.paypal-link"),
 			href: "https://paypal.me/sniferl4bs",
@@ -244,16 +245,15 @@ export class LonelogSettingTab extends PluginSettingTab {
 		});
 
 		linksCol.createSpan({ text: " • ", cls: "lonelog-link-separator" });
-
+		
 		linksCol.createEl("a", {
 			text: t("settings.funding-link"),
 			href: "https://www.patreon.com/c/BastiondelDinosaurio",
 			cls: "lonelog-about-link"
 		});
 
-
-		// ── Interface / Language ───────────────────────────────────────────
-		new Setting(containerEl).setName(t("settings.language-section")).setHeading();
+		// ── Interface ──────────────────────────────────────────────────
+		new Setting(containerEl).setName(t("settings.interface-section")).setHeading();
 
 		new Setting(containerEl)
 			.setName(t("settings.language"))
@@ -268,6 +268,24 @@ export class LonelogSettingTab extends PluginSettingTab {
 						setLocale(value);
 						await this.plugin.saveSettings();
 						this.display(); // Refresh tab to update labels
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t("settings.default-view"))
+			.setDesc(t("settings.default-view-desc"))
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption("", t("settings.none"))
+					.addOption("lonelog-dashboard", t("views.dashboard-title"))
+					.addOption("lonelog-progress-view", t("views.progress-title"))
+					.addOption("lonelog-thread-view", t("views.thread-title"))
+					.addOption("lonelog-scene-nav", t("views.scene-title"))
+					.addOption("lonelog-combat-view", t("views.combat-tracker-title"))
+					.setValue(this.plugin.settings.defaultRibbonView)
+					.onChange(async (value) => {
+						this.plugin.settings.defaultRibbonView = value;
+						await this.plugin.saveSettings();
 					})
 			);
 
@@ -334,7 +352,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.setDesc(t("settings.default-ruleset-desc"))
 			.addText((text) =>
 				text
-					.setPlaceholder("e.g. Loner + Mythic Oracle")
+					.setPlaceholder("Loner + mythic oracle")
 					.setValue(this.plugin.settings.defaultRuleset)
 					.onChange(async (value) => {
 						this.plugin.settings.defaultRuleset = value;
@@ -347,7 +365,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.setDesc(t("settings.default-genre-desc"))
 			.addText((text) =>
 				text
-					.setPlaceholder("e.g. Teen mystery")
+					.setPlaceholder("Teen mystery")
 					.setValue(this.plugin.settings.defaultGenre)
 					.onChange(async (value) => {
 						this.plugin.settings.defaultGenre = value;
@@ -360,7 +378,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.setDesc(t("settings.default-player-desc"))
 			.addText((text) =>
 				text
-					.setPlaceholder("e.g. Alex")
+					.setPlaceholder("Alex")
 					.setValue(this.plugin.settings.defaultPlayer)
 					.onChange(async (value) => {
 						this.plugin.settings.defaultPlayer = value;
@@ -373,7 +391,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.setDesc(t("settings.default-themes-desc"))
 			.addText((text) =>
 				text
-					.setPlaceholder("e.g. Friendship, courage")
+					.setPlaceholder("Friendship, courage")
 					.setValue(this.plugin.settings.defaultThemes)
 					.onChange(async (value) => {
 						this.plugin.settings.defaultThemes = value;
@@ -386,7 +404,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.setDesc(t("settings.default-tone-desc"))
 			.addText((text) =>
 				text
-					.setPlaceholder("e.g. Eerie but playful")
+					.setPlaceholder("Eerie but playful")
 					.setValue(this.plugin.settings.defaultTone)
 					.onChange(async (value) => {
 						this.plugin.settings.defaultTone = value;

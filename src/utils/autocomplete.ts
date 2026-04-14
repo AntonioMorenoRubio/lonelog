@@ -302,7 +302,7 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 
 				suggestions.push({
 					name: item.name,
-					type: item.type as any,
+					type: item.type,
 					current: item.current,
 					max: item.max,
 					displayText,
@@ -414,8 +414,6 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 					break;
 				case "clock": {
 					// Detect prefix (E: or Clock:)
-					const prefixMatch = beforeCursor.match(/\[(E|Clock):[^\]|]*$/);
-					const prefix = prefixMatch ? prefixMatch[1] : "Clock";
 					insertion = `${suggestion.name} ${suggestion.current}/${suggestion.max}]`;
 					break;
 				}

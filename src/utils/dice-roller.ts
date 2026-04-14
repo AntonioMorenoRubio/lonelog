@@ -133,7 +133,7 @@ export class DiceRoller {
 			basePart = dMatch[1].trim();
 		} else {
 			// Look for indented label lines: "  Apariencia: d3"
-			const labelMatch = /^\s*([^:(\[\]]+):\s*([^->\n=]+)/.exec(line);
+			const labelMatch = /^\s*([^:([]+):\s*([^->\n=]+)/.exec(line);
 			if (labelMatch && labelMatch[1] && labelMatch[2]) {
 				basePart = labelMatch[2].trim();
 			} else {
@@ -184,7 +184,7 @@ export class DiceRoller {
 		
 		// If no standard prefix, check if it's a Label: format
 		if (!prefix) {
-			const labelMatch = /^(\s*[^:(\[\]]+:\s*)/i.exec(line);
+			const labelMatch = /^(\s*[^:([]+:\s*)/i.exec(line);
 			if (labelMatch) prefix = labelMatch[0];
 		}
 

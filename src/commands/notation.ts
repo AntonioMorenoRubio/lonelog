@@ -1,7 +1,6 @@
 import { App, Editor } from "obsidian";
 import { LonelogSettings } from "../settings";
 import { TrackModal } from "./templates";
-import { DiceRoller } from "../utils/dice-roller";
 import { TableResolver, TableDefinition } from "../utils/table-resolver";
 import { RollManager } from "../utils/roll-manager";
 

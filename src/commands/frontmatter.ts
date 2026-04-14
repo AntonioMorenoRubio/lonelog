@@ -1,6 +1,20 @@
 import { App, TFile, Notice } from "obsidian";
 import { LonelogSettings } from "../settings";
-import { t } from "../i18n/i18n";
+
+interface LonelogFrontmatter {
+    title?: string;
+    ruleset?: string;
+    genre?: string;
+    player?: string;
+    pcs?: string;
+    start_date?: string;
+    last_update?: string;
+    tools?: string;
+    themes?: string;
+    tone?: string;
+    notes?: string;
+    [key: string]: string | number | boolean | undefined | string[]; 
+}
 
 export class FrontmatterCommands {
     /**
@@ -10,13 +24,15 @@ export class FrontmatterCommands {
         try {
             const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-            await app.fileManager.processFrontMatter(file, (frontmatter) => {
+            await app.fileManager.processFrontMatter(file, (frontmatter: LonelogFrontmatter) => {
                 // We don't overwrite existing values if they are already set
                 if (frontmatter.title === undefined) frontmatter.title = file.basename;
                 if (frontmatter.ruleset === undefined) frontmatter.ruleset = settings.defaultRuleset;
                 if (frontmatter.genre === undefined) frontmatter.genre = settings.defaultGenre;
                 if (frontmatter.player === undefined) frontmatter.player = settings.defaultPlayer;
-                if (frontmatter.pcs === undefined) frontmatter.pcs = `${settings.defaultPlayer} [PC:${settings.defaultPlayer}|HP 10|Stress 0|Gear:...]`;
+                if (frontmatter.pcs === undefined) {
+                    frontmatter.pcs = `${settings.defaultPlayer} [PC:${settings.defaultPlayer}|HP 10|Stress 0|Gear:...]`;
+                }
                 if (frontmatter.start_date === undefined) frontmatter.start_date = today;
 
                 // Always update last_update when initializing
@@ -28,10 +44,10 @@ export class FrontmatterCommands {
                 if (frontmatter.notes === undefined) frontmatter.notes = "";
             });
 
-            new Notice("Lonelog properties initialized.");
+            new Notice("Properties initialized");
         } catch (error) {
             console.error("Error initializing Lonelog properties:", error);
-            new Notice("Failed to initialize Lonelog properties.");
+            new Notice("Failed to initialize properties");
         }
     }
 }

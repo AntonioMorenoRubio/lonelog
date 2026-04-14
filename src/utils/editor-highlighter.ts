@@ -63,8 +63,6 @@ class DiceWidget extends WidgetType {
 		span.className = "lonelog-dice-widget";
 		span.title = `Roll ${this.notation} (inserts result)`;
 		span.setAttribute("role", "button");
-		span.style.cursor = "pointer";
-		span.style.marginLeft = "4px";
 
 		// Use pointerdown/mousedown so it triggers before CodeMirror drops the node
 		span.onmousedown = (e) => {

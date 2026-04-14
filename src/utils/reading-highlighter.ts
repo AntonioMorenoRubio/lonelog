@@ -166,7 +166,7 @@ export const lonelogGlobalProcessor = (app: App, settings: LonelogSettings) => (
 	const targets = el.querySelectorAll("p, li, blockquote");
 	if (targets.length === 0 && (el.tagName === "P" || el.tagName === "LI" || el.tagName === "BLOCKQUOTE")) {
 		// el itself might be a target depending on how Obsidian calls the processor
-		processTarget(el as HTMLElement, app, settings, ctx);
+		processTarget(el, app, settings, ctx);
 	} else {
 		targets.forEach(target => processTarget(target as HTMLElement, app, settings, ctx));
 	}

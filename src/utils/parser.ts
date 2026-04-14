@@ -448,7 +448,6 @@ export class NotationParser {
 		let currentEncounter: ParsedCombatEncounter | null = null;
 
 		lines.forEach((line, index) => {
-			const trimmed = line.trim();
 
 			// Detect Combat start or block start
 			// Supports both [COMBAT] on its own or ### scene header [COMBAT]

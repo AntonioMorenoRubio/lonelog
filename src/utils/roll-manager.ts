@@ -51,7 +51,7 @@ export class RollManager {
 		}
 
 		// --- Case B: Generator label roll (e.g. "  Apariencia: d3") ---
-		const labelMatch = /^\s*([^:(\[\]]+):\s*(\d*d(?:\d+|f))/i.exec(lineText);
+		const labelMatch = /^\s*([^:([]+):\s*(\d*d(?:\d+|f))/i.exec(lineText);
 		if (labelMatch && labelMatch[1] && labelMatch[2]) {
 			const label = labelMatch[1].trim().toLowerCase();
 			const dice = labelMatch[2];

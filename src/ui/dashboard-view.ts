@@ -4,7 +4,7 @@
  */
 
 import { ItemView, TFile, WorkspaceLeaf, debounce } from "obsidian";
-import { NotationParser, ParsedElements, ParsedSession, ParsedScene } from "../utils/parser";
+import { NotationParser, ParsedElements } from "../utils/parser";
 import { t } from "../i18n/i18n";
 
 export const DASHBOARD_VIEW_TYPE = "lonelog-dashboard";

@@ -1,4 +1,4 @@
-import { Plugin, TFile } from "obsidian";
+import { Menu, MenuItem, Plugin, TFile } from "obsidian";
 import { setLocale, t } from "./i18n/i18n";
 import {
 	DEFAULT_SETTINGS, LonelogSettings, LonelogSettingTab, applyHighlightColors, removeHighlightColors
@@ -82,6 +82,22 @@ export default class LonelogPlugin extends Plugin {
 		this.autoComplete = new LonelogAutoComplete(this.app);
 		this.registerEditorSuggest(this.autoComplete);
 
+		// Add Ribbon Icon for View Selector
+		const ribbonIconEl = this.addRibbonIcon("layout-list", "Lonelog views", (evt: MouseEvent) => {
+			if (this.settings.defaultRibbonView) {
+				// Left click with default set: activate it
+				void this.activateView(this.settings.defaultRibbonView);
+			} else {
+				// No default: show menu
+				this.showViewSelectorMenu(evt);
+			}
+		});
+
+		ribbonIconEl.addEventListener("contextmenu", (evt: MouseEvent) => {
+			evt.preventDefault();
+			this.showViewSelectorMenu(evt);
+		});
+
 		// Handle frontmatter updates on file modification
 		this.registerEvent(
 			this.app.vault.on("modify", async (file) => {
@@ -100,7 +116,7 @@ export default class LonelogPlugin extends Plugin {
 					const today = new Date().toISOString().split("T")[0];
 					if (fm.last_update !== today) {
 						// Update the frontmatter
-						await this.app.fileManager.processFrontMatter(file as TFile, (frontmatter) => {
+						await this.app.fileManager.processFrontMatter(file, (frontmatter: Record<string, string | number | boolean | undefined>) => {
 							frontmatter.last_update = today;
 						});
 					}
@@ -342,7 +358,7 @@ export default class LonelogPlugin extends Plugin {
 
 		// Phase 3: Frontmatter commands
 		this.addCommand({
-			id: "init-lonelog-note",
+			id: "initialize-note-properties",
 			name: t("commands.init-lonelog-note"),
 			editorCallback: (editor, ctx) => {
 				const file = this.app.workspace.getActiveFile();
@@ -392,6 +408,15 @@ export default class LonelogPlugin extends Plugin {
 				void this.activateView(COMBAT_VIEW_TYPE);
 			},
 		});
+
+		this.addCommand({
+			id: "open-view-selector",
+			name: t("commands.open-view-selector"),
+			callback: () => {
+				// Use undefined to center the menu if called from command palette
+				this.showViewSelectorMenu(undefined);
+			},
+		});
 	}
 
 	async activateView(viewType: string) {
@@ -418,5 +443,74 @@ export default class LonelogPlugin extends Plugin {
 
 		// Reveal the leaf
 		void workspace.revealLeaf(leaf);
+	}
+
+	/**
+	 * Shows a menu to select which Lonelog view to open
+	 */
+	showViewSelectorMenu(evt?: MouseEvent) {
+		const menu = new Menu();
+
+		const views = [
+			{ id: DASHBOARD_VIEW_TYPE, name: t("views.dashboard-title"), icon: "layout-dashboard" },
+			{ id: PROGRESS_VIEW_TYPE, name: t("views.progress-title"), icon: "clock" },
+			{ id: THREAD_VIEW_TYPE, name: t("views.thread-title"), icon: "list" },
+			{ id: SCENE_NAV_TYPE, name: t("views.scene-title"), icon: "map" },
+			{ id: COMBAT_VIEW_TYPE, name: t("views.combat-tracker-title"), icon: "swords" },
+		];
+
+		views.forEach((view) => {
+			const isDefault = this.settings.defaultRibbonView === view.id;
+			
+			menu.addItem((item) => {
+				item
+					.setTitle(view.name + (isDefault ? " (Default)" : ""))
+					.setIcon(view.icon)
+					.onClick(() => {
+						void this.activateView(view.id);
+					});
+			});
+		});
+
+		menu.addSeparator();
+
+		// Add "Set as Default" submenu
+		menu.addItem((item) => {
+			item
+				.setTitle(t("settings.default-view"))
+				.setIcon("pin");
+			
+			const submenuItem = item as MenuItem & { setSubmenu: () => Menu, submenu: Menu };
+			
+			if (typeof submenuItem.setSubmenu === "function") {
+				submenuItem.setSubmenu()
+					.addItem((sub: MenuItem) => {
+						sub.setTitle(t("settings.none"))
+						   .setIcon("x")
+						   .onClick(async () => {
+							   this.settings.defaultRibbonView = "";
+							   await this.saveSettings();
+						   });
+					});
+				
+				views.forEach((v) => {
+					submenuItem.submenu.addItem((sub: MenuItem) => {
+						sub.setTitle(v.name)
+						   .setIcon(v.icon)
+						   .onClick(async () => {
+							   this.settings.defaultRibbonView = v.id;
+							   await this.saveSettings();
+						   });
+					});
+				});
+			}
+		});
+
+		if (evt) {
+			menu.showAtMouseEvent(evt);
+		} else {
+			// Center if no event (e.g. from command palette)
+			menu.showAtPosition({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+		}
 	}
 }

@@ -35,7 +35,7 @@ export class TableResolver {
 			if (trimmed === "") continue;
 
 			// Look for table header: tbl: Name (d6) or tbl: Name [Option A, ...]
-			const headerMatch = /^\s*tbl:\s*([^(\[]+)(?:\(([^)]+)\)|\[([^\]]+)\])/i.exec(line);
+			const headerMatch = /^\s*tbl:\s*([^([]+)(?:\(([^)]+)\)|\[([^\]]+)\])/i.exec(line);
 			
 			if (headerMatch && headerMatch[1]) {
 				const name = headerMatch[1].trim();

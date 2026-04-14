@@ -1,5 +1,5 @@
 import { ItemView, WorkspaceLeaf, TFile } from "obsidian";
-import { NotationParser, ParsedCombatEncounter } from "../utils/parser";
+import { NotationParser, ParsedCombatEncounter, ParsedCombatant } from "../utils/parser";
 import { t } from "../i18n/i18n";
 
 export const COMBAT_VIEW_TYPE = "lonelog-combat-view";
@@ -44,7 +44,7 @@ export class CombatTrackerView extends ItemView {
 		}
 
 		// Use the vault to read file content since it might not be the active leaf's editor
-		this.app.vault.read(activeFile).then((content) => {
+		void this.app.vault.read(activeFile).then((content) => {
 			const elements = NotationParser.parse(content);
 			
 			if (elements.combat.length === 0) {
@@ -115,7 +115,7 @@ export class CombatTrackerView extends ItemView {
 	private renderSection(
 		parent: Element,
 		title: string,
-		list: any[],
+		list: ParsedCombatant[],
 		file: TFile
 	) {
 		const section = parent.createEl("div", { cls: "lonelog-combat-section" });
@@ -135,7 +135,7 @@ export class CombatTrackerView extends ItemView {
 			});
 			
 			nameBtn.onClickEvent(() => {
-				this.jumpToLine(file, c.line);
+				void this.jumpToLine(file, c.line);
 			});
 
 			const statsRow = item.createEl("div", { cls: "lonelog-combatant-stats" });
