@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - dev
-    workflow_dispatch:
-
-
 jobs:
   # ────────────────────────────────────────────────────────────
   # JOB 1: Lint con reglas de Obsidian (bloquea si hay errores)
