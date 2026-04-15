@@ -22,6 +22,7 @@ export class CombatTrackerView extends ItemView {
 	}
 
 	async onOpen() {
+		await super.onOpen();
 		this.registerEvent(
 			this.app.workspace.on("active-leaf-change", () => this.update())
 		);

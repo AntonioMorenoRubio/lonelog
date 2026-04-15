@@ -213,9 +213,9 @@ export class LonelogSettingTab extends PluginSettingTab {
 
 		// ── About & Credits ────────────────────────────────────────────────
 		new Setting(containerEl).setName(t("settings.about-section")).setHeading();
-		
+
 		const aboutDesc = containerEl.createDiv({ cls: "lonelog-about-container" });
-		
+
 		const systemRow = aboutDesc.createDiv({ cls: "lonelog-about-row" });
 		systemRow.createSpan({ text: "🖋️ " });
 		systemRow.createEl("a", {
@@ -223,21 +223,21 @@ export class LonelogSettingTab extends PluginSettingTab {
 			href: "https://zeruhur.itch.io/lonelog",
 			cls: "lonelog-about-text"
 		});
-		
+
 		const devRow = aboutDesc.createDiv({ cls: "lonelog-about-row" });
 		devRow.createSpan({ text: "💻 " });
 		devRow.createSpan({ text: t("settings.about-dev"), cls: "lonelog-about-text" });
-		
+
 		const linksCol = aboutDesc.createDiv({ cls: "lonelog-about-links" });
-		
+
 		linksCol.createEl("a", {
 			text: t("settings.youtube-link"),
 			href: "https://www.youtube.com/@BastiondelDinosaurio",
 			cls: "lonelog-about-link"
 		});
-		
+
 		linksCol.createSpan({ text: " • ", cls: "lonelog-link-separator" });
-		
+
 		linksCol.createEl("a", {
 			text: t("settings.paypal-link"),
 			href: "https://paypal.me/sniferl4bs",
@@ -245,10 +245,10 @@ export class LonelogSettingTab extends PluginSettingTab {
 		});
 
 		linksCol.createSpan({ text: " • ", cls: "lonelog-link-separator" });
-		
+
 		linksCol.createEl("a", {
 			text: t("settings.funding-link"),
-			href: "https://www.patreon.com/c/BastiondelDinosaurio",
+			href: "https://ko-fi.com/bastiondeldino",
 			cls: "lonelog-about-link"
 		});
 
