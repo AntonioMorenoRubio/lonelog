@@ -82,7 +82,7 @@ export default {
         "show-dice-low-desc": "Show the annotation for the lowest die value.",
         "frontmatter-section": "Note properties (frontmatter)",
         "default-ruleset": "Default ruleset",
-        "default-ruleset-desc": "Default ruleset injected when initializing a new lonelog note (e.g. loner + mythic oracle)",
+        "default-ruleset-desc": "Default ruleset injected when initializing a new lonelog note",
         "default-genre": "Default genre",
         "default-genre-desc": "Default genre injected",
         "default-player": "Default player name",
