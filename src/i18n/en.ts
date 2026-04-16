@@ -39,6 +39,7 @@ export default {
 		"roll-dice-on-line": "Roll dice on current line",
 		"show-dashboard": "Show lonelog dashboard",
 		"open-combat-tracker": "Open combat tracker",
+		"open-dungeon-status": "Open dungeon status view",
 		"open-view-selector": "Open lonelog view selector"
 	},
 	"settings": {
@@ -116,8 +117,12 @@ export default {
 		"color-combat-desc": "Text color for combat block delimiters",
 		"color-foe": "Foe tags ([f:...])",
 		"color-foe-desc": "Text color for combatant tracking tags",
-		"color-session": "Sessions (=== session ===)",
-		"color-session-desc": "Text color for session headers",
+		"enable-dungeon": "Dungeon crawling add-on",
+		"enable-dungeon-desc": "Enable room tracking, dungeon status blocks, and exploration management",
+		"color-room": "Room tags ([r:...])",
+		"color-room-desc": "Text color for dungeon room labels",
+		"color-dungeon-block": "Dungeon status [dungeon status]",
+		"color-dungeon-block-desc": "Text color for dungeon block delimiters",
 		"about-section": "About lonelog",
 		"about-system": "Lonelog system by roberto bisceglie",
 		"about-dev": "Developer plug-in: snifer (bastion del dinosaurio)",
@@ -157,6 +162,10 @@ export default {
 		"npcs": "NPCs",
 		"locations": "Locations",
 		"threads": "Threads",
+		"dungeon": "Dungeon",
+		"rooms": "Rooms",
+		"exits": "Exits",
+		"no-rooms": "No rooms found in this dungeon.",
 		"session": "Session",
 		"rolls-header": "Recent rolls & tables",
 		"no-rolls": "No rolls or table results found",
@@ -173,6 +182,7 @@ export default {
 		"round": "Round",
 		"party": "Party",
 		"foes": "Foes",
-		"combat-finished": "Finished"
+		"combat-finished": "Finished",
+		"dungeon-title": "Lonelog dungeon status"
 	}
 };

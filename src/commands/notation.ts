@@ -312,6 +312,29 @@ export class NotationCommands {
 		}
 	}
 
+	static insertRoomTag(editor: Editor, settings: LonelogSettings): void {
+		const text = "[R:1|active|]";
+		const cursor = editor.getCursor();
+		editor.replaceSelection(text);
+
+		if (settings.smartCursorPositioning) {
+			editor.setSelection(
+				{ line: cursor.line, ch: cursor.ch + 3 },
+				{ line: cursor.line, ch: cursor.ch + 4 }
+			);
+		}
+	}
+
+	static insertDungeonStatus(editor: Editor, settings: LonelogSettings): void {
+		const text = "[DUNGEON STATUS]\n\n[/DUNGEON STATUS]";
+		const cursor = editor.getCursor();
+		editor.replaceSelection(text);
+
+		if (settings.smartCursorPositioning) {
+			editor.setCursor({ line: cursor.line + 1, ch: 0 });
+		}
+	}
+
 	/**
 	 * @deprecated Use RollManager.processLine instead. Only kept for backward compatibility if needed within this class.
 	 */

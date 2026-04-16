@@ -12,6 +12,7 @@ import { ThreadBrowserView, THREAD_VIEW_TYPE } from "./ui/thread-view";
 import { SceneNavigatorView, SCENE_NAV_TYPE } from "./ui/scene-nav";
 import { DASHBOARD_VIEW_TYPE, DashboardView } from "ui/dashboard-view";
 import { CombatTrackerView, COMBAT_VIEW_TYPE } from "./ui/combat-view";
+import { DungeonStatusView, DUNGEON_VIEW_TYPE } from "./ui/dungeon-view";
 import { lonelogBlockProcessor, lonelogGlobalProcessor } from "./utils/reading-highlighter";
 import { lonelogEditorPlugin } from "./utils/editor-highlighter";
 
@@ -70,6 +71,10 @@ export default class LonelogPlugin extends Plugin {
 			COMBAT_VIEW_TYPE,
 			(leaf) => new CombatTrackerView(leaf)
 		);
+		this.registerView(
+			DUNGEON_VIEW_TYPE,
+			(leaf) => new DungeonStatusView(leaf)
+		);
 
 		// Detach all views
 		this.app.workspace.detachLeavesOfType(PROGRESS_VIEW_TYPE);
@@ -77,6 +82,7 @@ export default class LonelogPlugin extends Plugin {
 		this.app.workspace.detachLeavesOfType(SCENE_NAV_TYPE);
 		this.app.workspace.detachLeavesOfType(DASHBOARD_VIEW_TYPE);
 		this.app.workspace.detachLeavesOfType(COMBAT_VIEW_TYPE);
+		this.app.workspace.detachLeavesOfType(DUNGEON_VIEW_TYPE);
 
 		// Register auto-completion
 		this.autoComplete = new LonelogAutoComplete(this.app);
@@ -306,6 +312,26 @@ export default class LonelogPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+			id: "insert-room-tag",
+			name: t("commands.insert-room-tag"),
+			editorCheckCallback: (checking: boolean, editor) => {
+				if (checking) return this.settings.enableDungeonAddon;
+				if (editor) NotationCommands.insertRoomTag(editor, this.settings);
+				return true;
+			},
+		});
+
+		this.addCommand({
+			id: "insert-dungeon-status",
+			name: t("commands.insert-dungeon-status"),
+			editorCheckCallback: (checking: boolean, editor) => {
+				if (checking) return this.settings.enableDungeonAddon;
+				if (editor) NotationCommands.insertDungeonStatus(editor, this.settings);
+				return true;
+			},
+		});
+
 		// Phase 2: Template commands
 		this.addCommand({
 			id: "insert-campaign-header",
@@ -410,6 +436,14 @@ export default class LonelogPlugin extends Plugin {
 		});
 
 		this.addCommand({
+			id: "open-dungeon-status",
+			name: t("commands.open-dungeon-status"),
+			callback: () => {
+				void this.activateView(DUNGEON_VIEW_TYPE);
+			},
+		});
+
+		this.addCommand({
 			id: "open-view-selector",
 			name: t("commands.open-view-selector"),
 			callback: () => {
@@ -457,6 +491,7 @@ export default class LonelogPlugin extends Plugin {
 			{ id: THREAD_VIEW_TYPE, name: t("views.thread-title"), icon: "list" },
 			{ id: SCENE_NAV_TYPE, name: t("views.scene-title"), icon: "map" },
 			{ id: COMBAT_VIEW_TYPE, name: t("views.combat-tracker-title"), icon: "swords" },
+			{ id: DUNGEON_VIEW_TYPE, name: t("views.dungeon-title"), icon: "map" },
 		];
 
 		views.forEach((view) => {

@@ -7,6 +7,7 @@ export default {
 		"roll-dice-on-line": "Tirar dados en la línea actual",
 		"show-dashboard": "Mostrar dashboard de Lonelog",
 		"open-combat-tracker": "Abrir rastreador de combate",
+		"open-dungeon-status": "Abrir vista de estado de mazmorra",
 		"open-view-selector": "Abrir selector de vistas de Lonelog",
 		"insert-consequence": "Insertar consecuencia (=>)",
 		"insert-action-sequence": "Insertar secuencia de acción",
@@ -118,6 +119,12 @@ export default {
 		"color-foe-desc": "Color de texto para etiquetas de seguimiento de combatientes",
 		"color-session": "Sesiones (=== sesión ===)",
 		"color-session-desc": "Color de texto para cabeceras de sesión",
+		"enable-dungeon": "Añadido de Dungeon crawling",
+		"enable-dungeon-desc": "Habilita el rastreo de habitaciones, bloques de estado de mazmorra y gestión de exploración",
+		"color-room": "Etiquetas de habitación ([r:...])",
+		"color-room-desc": "Color del texto para las etiquetas de habitaciones de mazmorra",
+		"color-dungeon-block": "Estado de mazmorra [dungeon status]",
+		"color-dungeon-block-desc": "Color del texto para los delimitadores de bloques de mazmorra",
 		"about-section": "Acerca de Lonelog",
 		"about-system": "Sistema Lonelog creado por Roberto Bisceglie",
 		"about-dev": "Plug-in desarrollo por: Snifer (Bastión del Dinosaurio)",
@@ -159,7 +166,11 @@ export default {
 		"npcs": "PNJs",
 		"locations": "Lugares",
 		"threads": "Hilos",
+		"dungeon": "Mazmorra",
+		"rooms": "Habitaciones",
+		"exits": "Salidas",
 		"session": "Sesión",
+		"no-rooms": "No se encontraron habitaciones en esta mazmorra.",
 		"rolls-header": "Tiradas y Tablas Recientes",
 		"no-rolls": "No se encontraron tiradas ni resultados de tablas",
 		"tags": "Etiquetas",
@@ -170,6 +181,7 @@ export default {
 		"round": "Ronda",
 		"party": "Grupo (PJs)",
 		"foes": "Enemigos",
-		"combat-finished": "Finalizado"
+		"combat-finished": "Finalizado",
+		"dungeon-title": "Estado de la mazmorra Lonelog"
 	}
 };

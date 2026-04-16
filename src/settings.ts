@@ -30,6 +30,7 @@ export interface LonelogSettings {
 	enableGlobalNotation: boolean;
 	enableDiceRoller: boolean;
 	enableCombatAddon: boolean;
+	enableDungeonAddon: boolean;
 
 	// Dice roller output settings
 	diceDetailMode: boolean;   // Show individual dice values instead of sum
@@ -55,6 +56,8 @@ export interface LonelogSettings {
 	colorRound: string;       // Rd# — user-defined
 	colorCombatBlock: string; // [COMBAT] — user-defined
 	colorFoe: string;         // [F:...] — user-defined
+	colorRoom: string;        // [R:...] — user-defined
+	colorDungeonBlock: string; // [DUNGEON STATUS] — user-defined
 	locale: string;           // Interface language
 	defaultRibbonView: string; // View to open when ribbon is clicked
 }
@@ -83,6 +86,7 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 	enableGlobalNotation: false,
 	enableDiceRoller: true,
 	enableCombatAddon: false,
+	enableDungeonAddon: false,
 
 	// Dice output defaults
 	diceDetailMode: false,
@@ -108,6 +112,8 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 	colorRound: "#22c55e",  // default green
 	colorCombatBlock: "#ef4444", // default red
 	colorFoe: "#c2410c",    // default orange
+	colorRoom: "#c2410c",    // default orange
+	colorDungeonBlock: "#c2410c", // default orange
 	locale: "en",
 	defaultRibbonView: "",
 };
@@ -130,6 +136,8 @@ export function applyHighlightColors(settings: LonelogSettings): void {
 	document.body.style.setProperty("--ll-round-color", settings.colorRound);
 	document.body.style.setProperty("--ll-combat-color", settings.colorCombatBlock);
 	document.body.style.setProperty("--ll-foe-color", settings.colorFoe);
+	document.body.style.setProperty("--ll-room-color", settings.colorRoom);
+	document.body.style.setProperty("--ll-dungeon-block-color", settings.colorDungeonBlock);
 }
 
 /** Removes the injected CSS custom properties (call from onunload). */
@@ -150,6 +158,8 @@ export function removeHighlightColors(): void {
 	document.body.style.removeProperty("--ll-round-color");
 	document.body.style.removeProperty("--ll-combat-color");
 	document.body.style.removeProperty("--ll-foe-color");
+	document.body.style.removeProperty("--ll-room-color");
+	document.body.style.removeProperty("--ll-dungeon-block-color");
 }
 
 // ---------------------------------------------------------------------------
@@ -175,6 +185,8 @@ interface ColorDef {
 		| "colorRound"
 		| "colorCombatBlock"
 		| "colorFoe"
+		| "colorRoom"
+		| "colorDungeonBlock"
 	>;
 	label: string;
 	desc: string;
@@ -197,6 +209,8 @@ const COLOR_DEFS: ColorDef[] = [
 	{ key: "colorRound", label: t("settings.color-round"), desc: t("settings.color-round-desc") },
 	{ key: "colorCombatBlock", label: t("settings.color-combat"), desc: t("settings.color-combat-desc") },
 	{ key: "colorFoe", label: t("settings.color-foe"), desc: t("settings.color-foe-desc") },
+	{ key: "colorRoom", label: t("settings.color-room"), desc: t("settings.color-room-desc") },
+	{ key: "colorDungeonBlock", label: t("settings.color-dungeon-block"), desc: t("settings.color-dungeon-block-desc") },
 ];
 
 export class LonelogSettingTab extends PluginSettingTab {
@@ -481,6 +495,18 @@ export class LonelogSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.enableCombatAddon)
 					.onChange(async (value) => {
 						this.plugin.settings.enableCombatAddon = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t("settings.enable-dungeon"))
+			.setDesc(t("settings.enable-dungeon-desc"))
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.enableDungeonAddon)
+					.onChange(async (value) => {
+						this.plugin.settings.enableDungeonAddon = value;
 						await this.plugin.saveSettings();
 					})
 			);

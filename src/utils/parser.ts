@@ -43,6 +43,16 @@ export interface ParsedProgress {
 	line: number;
 }
 
+export interface ParsedRoom {
+	id: string;
+	status: string[];
+	description?: string;
+	exits: string[];
+	mentions: number[];
+	firstMention: number;
+	lastMention: number;
+}
+
 export interface ParsedScene {
 	number: string;
 	context: string;
@@ -78,6 +88,7 @@ export interface ParsedElements {
 	locations: Map<string, ParsedLocation>;
 	threads: Map<string, ParsedThread>;
 	pcs: Map<string, ParsedPC>;
+	rooms: Map<string, ParsedRoom>;
 	progress: ParsedProgress[];
 	sessions: ParsedSession[];
 	combat: ParsedCombatEncounter[];
@@ -103,11 +114,12 @@ export class NotationParser {
 		const locations = this.parseLocations(content);
 		const threads = this.parseThreads(content);
 		const pcs = this.parsePCs(content);
+		const rooms = this.parseRooms(content);
 		const progress = this.parseProgress(content);
 		const sessions = this.parseSessions(content);
 		const combat = this.parseCombatEncounters(content);
 
-		const result = { npcs, locations, threads, pcs, progress, sessions, combat };
+		const result = { npcs, locations, threads, pcs, rooms, progress, sessions, combat };
 
 		// Update cache
 		this.cache = { content, result };
@@ -245,6 +257,76 @@ export class NotationParser {
 		}
 
 		return threads;
+	}
+
+	/**
+	 * Parse Room tags: [R:ID|status|desc|exits] or [#R:ID]
+	 */
+	private static parseRooms(content: string): Map<string, ParsedRoom> {
+		const roomRegex = /\[#?R:([^\]|]+)(\|([^\]]*))?\]/g;
+		const rooms = new Map<string, ParsedRoom>();
+
+		let match;
+		while ((match = roomRegex.exec(content)) !== null) {
+			if (!match[1]) continue;
+			const id = match[1].trim();
+			const partsStr = match[3] || "";
+			const parts = partsStr.split("|").map(p => p.trim());
+			
+			const statusPart = parts[0] || "";
+			const description = parts[1] || undefined;
+			const exitsStr = parts[2] || "";
+			
+			// Handle status (including +prefix for adding)
+			let newStatuses = statusPart.split(",").map(s => s.trim()).filter(s => s);
+			
+			const lineNum = this.getLineNumber(content, match.index);
+			
+			if (rooms.has(id)) {
+				const existing = rooms.get(id)!;
+				existing.mentions.push(lineNum);
+				existing.lastMention = lineNum;
+				
+				// Update status
+				if (statusPart.startsWith("+")) {
+					// Additive status
+					const toAdd = statusPart.substring(1).split(",").map(s => s.trim()).filter(s => s);
+					toAdd.forEach(s => {
+						if (!existing.status.includes(s)) existing.status.push(s);
+					});
+				} else if (newStatuses.length > 0) {
+					// Replace status
+					existing.status = newStatuses;
+				}
+				
+				if (description) existing.description = description;
+				
+				// Handle exits
+				if (exitsStr.startsWith("exits ")) {
+					const exits = exitsStr.replace("exits ", "").split(",").map(e => e.trim()).filter(e => e);
+					exits.forEach(e => {
+						if (!existing.exits.includes(e)) existing.exits.push(e);
+					});
+				}
+			} else {
+				// Create new room
+				const exits = exitsStr.startsWith("exits ") 
+					? exitsStr.replace("exits ", "").split(",").map(e => e.trim()).filter(e => e)
+					: [];
+					
+				rooms.set(id, {
+					id,
+					status: newStatuses,
+					description,
+					exits,
+					mentions: [lineNum],
+					firstMention: lineNum,
+					lastMention: lineNum
+				});
+			}
+		}
+
+		return rooms;
 	}
 
 	/**

@@ -88,6 +88,9 @@ export class DashboardView extends ItemView {
 		
 		// Progress Section
 		this.renderProgress(rightCol);
+
+		// Dungeon Section
+		this.renderDungeon(rightCol);
 		
 		// Entities Section (NPCs, Locations, Threads)
 		this.renderEntities(rightCol);
@@ -106,6 +109,7 @@ export class DashboardView extends ItemView {
 		this.createStatCard(stats, "Scenes", totalScenes.toString());
 		this.createStatCard(stats, "NPCs", (this.elements?.npcs.size || 0).toString());
 		this.createStatCard(stats, "Threads", (this.elements?.threads.size || 0).toString());
+		this.createStatCard(stats, "Rooms", (this.elements?.rooms.size || 0).toString());
 	}
 
 	private createStatCard(container: HTMLElement, label: string, value: string): void {
@@ -173,6 +177,43 @@ export class DashboardView extends ItemView {
 			}
 			
 			card.addEventListener("click", () => this.jumpToLine(item.line));
+		});
+	}
+
+	private renderDungeon(container: HTMLElement): void {
+		const section = container.createEl("div", { cls: "ll-dashboard-section" });
+		section.createEl("h2", { text: t("views.dungeon-header") });
+
+		if (!this.elements || this.elements.rooms.size === 0) {
+			section.createEl("div", { text: t("views.no-rooms"), cls: "ll-empty-hint" });
+			return;
+		}
+
+		const list = section.createEl("div", { cls: "ll-entity-list" });
+		
+		this.elements.rooms.forEach(room => {
+			const item = list.createEl("div", { cls: "ll-entity-item" });
+			const nameCol = item.createEl("div", { cls: "ll-room-info" });
+			nameCol.createEl("span", { text: `R${room.id}`, cls: "ll-entity-name" });
+			if (room.description) {
+				nameCol.createEl("span", { text: room.description, cls: "ll-room-desc" });
+			}
+			
+			const statusTags = item.createEl("div", { cls: "ll-room-statuses" });
+			room.status.forEach(s => {
+				statusTags.createEl("span", { 
+					text: s, 
+					cls: `ll-room-status ll-status-${s.toLowerCase().replace(/\s+/g, "-")}` 
+				});
+			});
+			
+			if (room.exits.length > 0) {
+				const exitsEl = item.createEl("div", { cls: "ll-room-exits" });
+				exitsEl.createEl("span", { text: "Exits: ", cls: "ll-exits-label" });
+				exitsEl.createEl("span", { text: room.exits.join(", "), cls: "ll-exits-list" });
+			}
+
+			item.addEventListener("click", () => this.jumpToLine(room.lastMention));
 		});
 	}
 

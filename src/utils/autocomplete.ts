@@ -16,7 +16,7 @@ import { NotationParser, ParsedElements } from "./parser";
 
 interface TagSuggestion {
 	name: string;
-	type: "npc" | "location" | "thread" | "pc" | "clock" | "track" | "timer";
+	type: "npc" | "location" | "thread" | "pc" | "clock" | "track" | "timer" | "room";
 	tags?: string[];
 	current?: number;
 	max?: number;
@@ -136,6 +136,19 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 			};
 		}
 
+		// Room tag: [R:
+		const roomMatch = beforeCursor.match(/\[(#)?R:([^\]|]*)$/);
+		if (roomMatch) {
+			const query = roomMatch[2] || "";
+			const start = cursor.ch - query.length;
+
+			return {
+				start: { line: cursor.line, ch: start },
+				end: cursor,
+				query,
+			};
+		}
+
 		return null;
 	}
 
@@ -176,6 +189,8 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 			return this.getProgressSuggestions(query, "track");
 		} else if (/\[Timer:[^\]|]*$/.test(beforeCursor)) {
 			return this.getProgressSuggestions(query, "timer");
+		} else if (/\[(#)?R:[^\]|]*$/.test(beforeCursor)) {
+			return this.getRoomSuggestions(query);
 		}
 
 		return [];
@@ -314,6 +329,31 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 	}
 
 	/**
+	 * Get Room suggestions
+	 */
+	private getRoomSuggestions(query: string): TagSuggestion[] {
+		if (!this.parsedElements) return [];
+
+		const suggestions: TagSuggestion[] = [];
+
+		for (const [id, room] of this.parsedElements.rooms.entries()) {
+			if (query === "" || id.toLowerCase().includes(query)) {
+				let displayText = `R${id}`;
+				if (room.description) displayText += ` (${room.description})`;
+				if (room.status.length > 0) displayText += ` [${room.status.join(", ")}]`;
+
+				suggestions.push({
+					name: id,
+					type: "room",
+					displayText,
+				});
+			}
+		}
+
+		return this.sortSuggestions(suggestions, query);
+	}
+
+	/**
 	 * Sort suggestions by relevance
 	 */
 	private sortSuggestions(
@@ -422,6 +462,9 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 					break;
 				case "timer":
 					insertion = `${suggestion.name} ${suggestion.current}]`;
+					break;
+				case "room":
+					insertion = `${suggestion.name}|active|]`;
 					break;
 			}
 		}
