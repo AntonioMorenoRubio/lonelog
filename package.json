@@ -1,6 +1,6 @@
 {
 	"name": "lonelog",
-	"version": "0.1",
+	"version": "1.4.0",
 	"author": "Bastion del Dinosaurio",
 	"description": "Streamline solo TTRPG journaling with Lonelog notation shortcuts and templates.",
 	"main": "main.js",
@@ -10,6 +10,7 @@
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
 		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
 		"test": "jest"
 	},
 	"keywords": [],

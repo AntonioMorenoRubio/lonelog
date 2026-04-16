@@ -1,15 +1,15 @@
 # Lonelog for Obsidian  - Solo TTRPG Journaling
 [![Obsidian](https://img.shields.io/badge/Obsidian-Plugin-7C3AED?logo=obsidian)](https://obsidian.md/plugins)
-[![version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/snifer/lonelog/releases)
+[![version](https://img.shields.io/badge/version-1.4.0-blue.svg)](https://github.com/snifer/lonelog/releases)
 [![license](https://img.shields.io/badge/license-0--BSD-green.svg)](LICENSE)
 ![GitHub Downloads](https://img.shields.io/github/downloads/Snifer/lonelog/total?logo)
 
 
 ![Lonelog Obsidian Plug-in Logo](./assets/lonelog-obsidian-logo.png)
 
-**Lonelog for Obsidian** streamlines your solo TTRPG journaling by bringing the [Lonelog notation](https://zeruhur.itch.io/lonelog) standard directly into your vault. Focus on the story while keeping mechanics organized, visual, and fast.
+**Lonelog for Obsidian** streamlines your solo TTRPG journaling by bringing the [Lonelog notation](https://zeruhur.itch.io/lonelog) standard directly into your vault. Focus on the story while keeping mechanics organized, visual, and fast. **Fully compatible with Lonelog 1.4.0 system.**
 
-**Lonelog para Obsidian** optimiza el registro de tus partidas de rol en solitario (Solo TTRPG) integrando el estándar de [notación Lonelog](https://zeruhur.itch.io/lonelog) directamente en tu bóveda. Céntrate en la historia mientras mantienes las mecánicas organizadas, visuales y ágiles.
+**Lonelog para Obsidian** optimiza el registro de tus partidas de rol en solitario (Solo TTRPG) integrando el estándar de [notación Lonelog](https://zeruhur.itch.io/lonelog) directamente en tu bóveda. Céntrate en la historia mientras mantienes las mecánicas organizadas, visuales y ágiles. **Soporte completo para el sistema Lonelog 1.4.0.**
 
 ---
 
