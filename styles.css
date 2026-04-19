@@ -582,8 +582,6 @@ If your plugin does not need CSS, delete this file.
 .ll-room {
 	color: var(--ll-room-color, #c2410c);
 	font-weight: 600;
-	border-left: 2px solid var(--ll-room-color, #c2410c);
-	padding-left: 4px;
 }
 
 .ll-inventory {
@@ -763,8 +761,6 @@ If your plugin does not need CSS, delete this file.
 .ll-ed-room {
 	color: var(--ll-room-color, #c2410c);
 	font-weight: 600;
-	border-left: 2px solid var(--ll-room-color, #c2410c);
-	padding-left: 4px;
 }
 
 .ll-ed-inventory {

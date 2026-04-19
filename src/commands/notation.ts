@@ -65,7 +65,7 @@ export class NotationCommands {
 
 	// Tag snippet insertions
 	static insertNPCTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[N:Name|]";
+		const text = "[N:Name]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 
@@ -79,7 +79,7 @@ export class NotationCommands {
 	}
 
 	static insertLocationTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[L:Name|]";
+		const text = "[L:Name]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 
@@ -205,7 +205,7 @@ export class NotationCommands {
 	}
 
 	static insertPCTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[PC:Name|]";
+		const text = "[PC:Name]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 
@@ -314,7 +314,7 @@ export class NotationCommands {
 	}
 
 	static insertFoeTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[F:Name|]";
+		const text = "[F:Name]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 
@@ -327,7 +327,7 @@ export class NotationCommands {
 	}
 
 	static insertRoomTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[R:1|active|]";
+		const text = "[R:1|active]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 
@@ -350,7 +350,7 @@ export class NotationCommands {
 	}
 
 	static insertInventoryTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[Inv:Name|1|]";
+		const text = "[Inv:Name|1]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 

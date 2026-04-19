@@ -442,7 +442,7 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 					if (suggestion.tags && suggestion.tags.length > 0) {
 						insertion = `${suggestion.name}|${suggestion.tags.join("|")}]`;
 					} else {
-						insertion = `${suggestion.name}|]`;
+						insertion = `${suggestion.name}]`;
 					}
 					break;
 				case "thread":
@@ -460,11 +460,11 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 					insertion = `${suggestion.name} ${suggestion.current}]`;
 					break;
 				case "room":
-					insertion = `${suggestion.name}|active|]`;
+					insertion = `${suggestion.name}|active]`;
 					break;
 				case "inventory":
 				case "wealth":
-					insertion = `${suggestion.name}|]`;
+					insertion = `${suggestion.name}]`;
 					break;
 			}
 		}
