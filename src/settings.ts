@@ -33,6 +33,7 @@ export interface LonelogSettings {
 	enableDungeonAddon: boolean;
 	enableResourceAddon: boolean;
 	enableCardAddon: boolean;
+	enableDiceNotationAddon: boolean;
 
 	// Dice roller output settings
 	diceDetailMode: boolean;   // Show individual dice values instead of sum
@@ -98,6 +99,7 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 	enableDungeonAddon: false,
 	enableResourceAddon: false,
 	enableCardAddon: false,
+	enableDiceNotationAddon: false,
 
 	// Dice output defaults
 	diceDetailMode: false,
@@ -620,6 +622,18 @@ export class LonelogSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.enableCardAddon)
 					.onChange(async (value) => {
 						this.plugin.settings.enableCardAddon = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t("settings.enable-dice-notation"))
+			.setDesc(t("settings.enable-dice-notation-desc"))
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.enableDiceNotationAddon)
+					.onChange(async (value) => {
+						this.plugin.settings.enableDiceNotationAddon = value;
 						await this.plugin.saveSettings();
 					})
 			);

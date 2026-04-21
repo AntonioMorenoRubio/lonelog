@@ -142,6 +142,8 @@ export default {
 		"enable-resources-desc": "Habilita el seguimiento de inventario, gestión de riqueza y bloques de estado de recursos",
 		"enable-card": "Add-on de Cartas",
 		"enable-card-desc": "Habilita la notación y widgets interactivos para robos de baraja estándar y tarot (d: draw, d: tarot)",
+		"enable-dice-notation": "Add-on de Notación Avanzada de Dados",
+		"enable-dice-notation-desc": "Habilita reglas de dados complejas (explosión, descartar menores, ventaja) basándose en la gramática estándar.",
 		"color-inventory": "Etiquetas de inventario ([inv:...])",
 		"color-inventory-desc": "Color del texto para objetos y suministros",
 		"color-wealth": "Etiquetas de riqueza ([wealth:...])",

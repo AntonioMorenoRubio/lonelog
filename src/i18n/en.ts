@@ -140,6 +140,8 @@ export default {
 		"enable-resources-desc": "Enable inventory tracking, wealth management, and resource status blocks",
 		"enable-card": "Card drawing add-on",
 		"enable-card-desc": "Enable notation parsing and interactive widgets for drawing cards (d: draw, d: tarot)",
+		"enable-dice-notation": "Advanced Dice Notation Add-on",
+		"enable-dice-notation-desc": "Enables complex dice rules (exploding, drop lowest, advantage) using standard notation grammar.",
 		"color-inventory": "Inventory tags ([inv:...])",
 		"color-inventory-desc": "Text color for items and supplies",
 		"color-wealth": "Wealth tags ([wealth:...])",
