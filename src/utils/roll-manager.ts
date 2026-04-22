@@ -47,7 +47,8 @@ export class RollManager {
 							showHigh: settings.showDiceHigh,
 							lowLabel: settings.diceLowLabel,
 							showLow: settings.showDiceLow,
-							tableOutcome
+							tableOutcome,
+							roller: settings.enableDiceNotationAddon ? AdvancedDiceRoller.roll : DiceRoller.roll
 						});
 					}
 				}
@@ -75,7 +76,8 @@ export class RollManager {
 						showHigh: settings.showDiceHigh,
 						lowLabel: settings.diceLowLabel,
 						showLow: settings.showDiceLow,
-						tableOutcome
+						tableOutcome,
+						roller: settings.enableDiceNotationAddon ? AdvancedDiceRoller.roll : DiceRoller.roll
 					});
 				}
 			}
@@ -93,6 +95,7 @@ export class RollManager {
 				showHigh: settings.showDiceHigh,
 				lowLabel: settings.diceLowLabel,
 				showLow: settings.showDiceLow,
+				roller: settings.enableDiceNotationAddon ? AdvancedDiceRoller.roll : DiceRoller.roll
 			});
 		}
 

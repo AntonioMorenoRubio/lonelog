@@ -29,6 +29,8 @@ export interface DiceFormatOptions {
 	lowLabel?: string;
 	/** Whether to show the low annotation. Default: true. */
 	showLow?: boolean;
+	/** Optional roller function to use for individual segments. */
+	roller?: (notation: string) => RollResult | null;
 }
 
 export class DiceRoller {
@@ -197,12 +199,21 @@ export class DiceRoller {
 		const segments = contentAfterPrefix.split(/,\s+(?=\d*d(?:\d+|f))/i);
 
 		// 3. Process each segment
-		const formattedSegments = segments.map(seg => {
+		const formattedSegments = segments.map((seg, idx) => {
 			// Extract pure notation from this segment
 			const eqIndex = seg.indexOf("=");
 			const notation = eqIndex !== -1 ? seg.substring(0, eqIndex).trim() : seg.trim();
 			
-			const rollResult = DiceRoller.roll(notation);
+			// If we only have one segment and a result was provided, use it directly
+			// to avoid re-rolling (preserves the exact rolls and supports advanced rollers)
+			let rollResult: RollResult | null = null;
+			if (segments.length === 1 && result) {
+				rollResult = result;
+			} else {
+				const rollFunc = options.roller || DiceRoller.roll;
+				rollResult = rollFunc(notation);
+			}
+
 			if (!rollResult) return seg;
 
 			const isFate = rollResult.sides === "f";

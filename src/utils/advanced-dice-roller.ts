@@ -22,7 +22,6 @@ export class AdvancedDiceRoller {
 		let firstSides: number | "f" = 6;
 		let foundAny = false;
 
-		const rolls: number[] = [];
 		const originalRolls: number[] = [];
 		let total = 0;
 		let totalModifier = 0;
@@ -60,35 +59,36 @@ export class AdvancedDiceRoller {
 					}
 				}
 
-				// Apply Keep/Drop
-				if (modStr && pool.length > 0) {
+				originalRolls.push(...pool);
+				
+				// Apply Keep/Drop to a separate array for total calculation
+				let keptPool = [...pool];
+				if (modStr && keptPool.length > 0) {
 					const keepMatch = modStr.match(/k(h|l)?(\d*)/);
 					const dropMatch = modStr.match(/d(h|l)?(\d*)/);
 
 					if (keepMatch) {
 						const type = keepMatch[1] === "l" ? "l" : "h";
 						const num = parseInt(keepMatch[2] || "1");
-						pool.sort((a, b) => b - a);
+						keptPool.sort((a, b) => b - a);
 						if (type === "h") {
-							pool = pool.slice(0, num);
+							keptPool = keptPool.slice(0, num);
 						} else {
-							pool = pool.slice(-num);
+							keptPool = keptPool.slice(-num);
 						}
 					} else if (dropMatch) {
-						const type = dropMatch[1] === "h" ? "h" : "l"; // Drop defaults to lowest
+						const type = dropMatch[1] === "h" ? "h" : "l";
 						const num = parseInt(dropMatch[2] || "1");
-						pool.sort((a, b) => b - a);
+						keptPool.sort((a, b) => b - a);
 						if (type === "l") {
-							pool = pool.slice(0, pool.length - num);
+							keptPool = keptPool.slice(0, Math.max(0, keptPool.length - num));
 						} else {
-							pool = pool.slice(num);
+							keptPool = keptPool.slice(num);
 						}
 					}
 				}
 
-				originalRolls.push(...pool);
-				for (const r of pool) {
-					rolls.push(r);
+				for (const r of keptPool) {
 					total += (r * sign);
 				}
 			} else if (match[6]) {
