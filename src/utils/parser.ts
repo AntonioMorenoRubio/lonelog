@@ -179,12 +179,12 @@ export class NotationParser {
 				const existing = npcs.get(name)!;
 				existing.mentions.push(lineNum);
 				existing.lastMention = lineNum;
-				// Merge tags (keep unique)
+				// When an NPC is updated, overwrite all existing tags
+				const newTags = [];
 				tags.forEach((tag) => {
-					if (!existing.tags.includes(tag)) {
-						existing.tags.push(tag);
-					}
+					newTags.push(tag)
 				});
+				existing.tags = newTags;
 			} else {
 				// Create new entry
 				npcs.set(name, {
