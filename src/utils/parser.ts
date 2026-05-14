@@ -181,7 +181,7 @@ export class NotationParser {
 				existing.lastMention = lineNum;
 				// When an NPC is updated, overwrite all existing tags
 				if(match.toString()[1]?.contains('#')) continue;
-				const newTags = [];
+				const newTags: Array<string> = []
 				tags.forEach((tag) => {
 					if(tag[0]?.contains('+')){
 						existing.tags.push(tag.slice(1, tag.length));
@@ -233,14 +233,28 @@ export class NotationParser {
 			const lineNum = this.getLineNumber(content, match.index);
 
 			if (locations.has(name)) {
+				// Update existing entry
 				const existing = locations.get(name)!;
 				existing.mentions.push(lineNum);
 				existing.lastMention = lineNum;
+				
+				// When an entity is updated, update as per the spec
+				if(match.toString()[1]?.contains('#')) continue;
+				const newTags: Array<string> = [];
 				tags.forEach((tag) => {
-					if (!existing.tags.includes(tag)) {
-						existing.tags.push(tag);
+					if(tag[0]?.contains('+')){
+						existing.tags.push(tag.slice(1, tag.length));
+					}else if(tag[0]?.contains('-')){
+						const tagText = tag.slice(1, tag.length)
+						const removeIndex = existing.tags.indexOf(tagText)
+						existing.tags.splice(removeIndex, 1)
+					} else {
+						newTags.push(tag)
 					}
 				});
+				if(newTags.length !== 0){
+					existing.tags = newTags;
+				};
 			} else {
 				locations.set(name, {
 					name,
@@ -383,11 +397,23 @@ export class NotationParser {
 				const existing = pcs.get(name)!;
 				existing.mentions.push(lineNum);
 				existing.lastMention = lineNum;
+				// When an NPC is updated, overwrite all existing tags
+				if(match.toString()[1]?.contains('#')) continue;
+				const newTags: Array<string> = [];
 				tags.forEach((tag) => {
-					if (!existing.tags.includes(tag)) {
-						existing.tags.push(tag);
+					if(tag[0]?.contains('+')){
+						existing.tags.push(tag.slice(1, tag.length));
+					}else if(tag[0]?.contains('-')){
+						const tagText = tag.slice(1, tag.length)
+						const removeIndex = existing.tags.indexOf(tagText)
+						existing.tags.splice(removeIndex, 1)
+					} else {
+						newTags.push(tag)
 					}
 				});
+				if(newTags.length !== 0){
+					existing.tags = newTags;
+				};
 			} else {
 				pcs.set(name, {
 					name,
