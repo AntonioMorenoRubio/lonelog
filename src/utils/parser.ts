@@ -3,15 +3,8 @@
  * Extracts structured data from Lonelog notation in markdown files
  */
 
-export interface ParsedNPC {
-	name: string;
-	tags: string[];
-	mentions: number[];
-	firstMention: number;
-	lastMention: number;
-}
 
-export interface ParsedLocation {
+export interface ParsedEntity{
 	name: string;
 	tags: string[];
 	mentions: number[];
@@ -22,14 +15,6 @@ export interface ParsedLocation {
 export interface ParsedThread {
 	name: string;
 	state: string;
-	mentions: number[];
-	firstMention: number;
-	lastMention: number;
-}
-
-export interface ParsedPC {
-	name: string;
-	tags: string[];
 	mentions: number[];
 	firstMention: number;
 	lastMention: number;
@@ -98,10 +83,10 @@ export interface ParsedCombatEncounter {
 }
 
 export interface ParsedElements {
-	npcs: Map<string, ParsedNPC>;
-	locations: Map<string, ParsedLocation>;
+	npcs: Map<string, ParsedEntity>;
+	locations: Map<string, ParsedEntity>;
 	threads: Map<string, ParsedThread>;
-	pcs: Map<string, ParsedPC>;
+	pcs: Map<string, ParsedEntity>;
 	rooms: Map<string, ParsedRoom>;
 	inventory: Map<string, ParsedItem>;
 	wealth: Map<string, string>; // Global/current wealth state
@@ -157,57 +142,16 @@ export class NotationParser {
 	/**
 	 * Parse NPC tags: [N:Name|tag1|tag2]
 	 */
-	private static parseNPCs(content: string): Map<string, ParsedNPC> {
+	private static parseNPCs(content: string): Map<string, ParsedEntity> {
 		const npcRegex = /\[#?N:([^\]|]+)(\|([^\]]*))?\]/g;
-		const npcs = new Map<string, ParsedNPC>();
+		const npcs = new Map<string, ParsedEntity>();
 
 		let match;
 		while ((match = npcRegex.exec(content)) !== null) {
 			if (!match[1]) continue;
-			const name = match[1].trim();
-			const tagsStr = match[3] || "";
-			const tags = tagsStr
-				.split("|")
-				.map((t) => t.trim())
-				.filter((t) => t);
-
-			// Find line number
-			const lineNum = this.getLineNumber(content, match.index);
-
-			if (npcs.has(name)) {
-				// Update existing entry
-				const existing = npcs.get(name)!;
-				existing.mentions.push(lineNum);
-				existing.lastMention = lineNum;
-				// When an NPC is updated, overwrite all existing tags
-				if(match.toString()[1]?.contains('#')) continue;
-				const newTags: Array<string> = []
-				tags.forEach((tag) => {
-					if(tag[0]?.contains('+')){
-						existing.tags.push(tag.slice(1, tag.length));
-					}else if(tag[0]?.contains('-')){
-						const tagText = tag.slice(1, tag.length)
-						const removeIndex = existing.tags.indexOf(tagText)
-						existing.tags.splice(removeIndex, 1)
-					} else {
-						newTags.push(tag)
-					}
-				});
-				if(newTags.length !== 0){
-					existing.tags = newTags;
-				};
-			} else {
-				// Create new entry
-				npcs.set(name, {
-					name,
-					tags,
-					mentions: [lineNum],
-					firstMention: lineNum,
-					lastMention: lineNum,
-				});
-			}
+			if (match.toString()[1]?.contains('#')) continue;
+			this.parseEntity(match, content, npcs)
 		}
-
 		return npcs;
 	}
 
@@ -216,54 +160,15 @@ export class NotationParser {
 	 */
 	private static parseLocations(
 		content: string
-	): Map<string, ParsedLocation> {
+	): Map<string, ParsedEntity> {
 		const locationRegex = /\[#?L:([^\]|]+)(\|([^\]]*))?\]/g;
-		const locations = new Map<string, ParsedLocation>();
+		const locations = new Map<string, ParsedEntity>();
 
 		let match;
 		while ((match = locationRegex.exec(content)) !== null) {
 			if (!match[1]) continue;
-			const name = match[1].trim();
-			const tagsStr = match[3] || "";
-			const tags = tagsStr
-				.split("|")
-				.map((t) => t.trim())
-				.filter((t) => t);
-
-			const lineNum = this.getLineNumber(content, match.index);
-
-			if (locations.has(name)) {
-				// Update existing entry
-				const existing = locations.get(name)!;
-				existing.mentions.push(lineNum);
-				existing.lastMention = lineNum;
-				
-				// When an entity is updated, update as per the spec
-				if(match.toString()[1]?.contains('#')) continue;
-				const newTags: Array<string> = [];
-				tags.forEach((tag) => {
-					if(tag[0]?.contains('+')){
-						existing.tags.push(tag.slice(1, tag.length));
-					}else if(tag[0]?.contains('-')){
-						const tagText = tag.slice(1, tag.length)
-						const removeIndex = existing.tags.indexOf(tagText)
-						existing.tags.splice(removeIndex, 1)
-					} else {
-						newTags.push(tag)
-					}
-				});
-				if(newTags.length !== 0){
-					existing.tags = newTags;
-				};
-			} else {
-				locations.set(name, {
-					name,
-					tags,
-					mentions: [lineNum],
-					firstMention: lineNum,
-					lastMention: lineNum,
-				});
-			}
+			if (match.toString()[1]?.contains('#')) continue;
+			this.parseEntity(match, content, locations);
 		}
 
 		return locations;
@@ -377,52 +282,16 @@ export class NotationParser {
 	/**
 	 * Parse PC tags: [PC:Name|tag1|tag2]
 	 */
-	private static parsePCs(content: string): Map<string, ParsedPC> {
+	private static parsePCs(content: string): Map<string, ParsedEntity> {
 		const pcRegex = /\[#?PC:([^\]|]+)(\|([^\]]*))?\]/g;
-		const pcs = new Map<string, ParsedPC>();
+		const pcs = new Map<string, ParsedEntity>();
 
 		let match;
 		while ((match = pcRegex.exec(content)) !== null) {
 			if (!match[1]) continue;
-			const name = match[1].trim();
-			const tagsStr = match[3] || "";
-			const tags = tagsStr
-				.split("|")
-				.map((t) => t.trim())
-				.filter((t) => t);
-
-			const lineNum = this.getLineNumber(content, match.index);
-
-			if (pcs.has(name)) {
-				const existing = pcs.get(name)!;
-				existing.mentions.push(lineNum);
-				existing.lastMention = lineNum;
-				// When an NPC is updated, overwrite all existing tags
-				if(match.toString()[1]?.contains('#')) continue;
-				const newTags: Array<string> = [];
-				tags.forEach((tag) => {
-					if(tag[0]?.contains('+')){
-						existing.tags.push(tag.slice(1, tag.length));
-					}else if(tag[0]?.contains('-')){
-						const tagText = tag.slice(1, tag.length)
-						const removeIndex = existing.tags.indexOf(tagText)
-						existing.tags.splice(removeIndex, 1)
-					} else {
-						newTags.push(tag)
-					}
-				});
-				if(newTags.length !== 0){
-					existing.tags = newTags;
-				};
-			} else {
-				pcs.set(name, {
-					name,
-					tags,
-					mentions: [lineNum],
-					firstMention: lineNum,
-					lastMention: lineNum,
-				});
-			}
+			if (match.toString()[1]?.contains('#')) continue;
+			this.parseEntity(match, content, pcs);	
+			
 		}
 
 		return pcs;
@@ -767,6 +636,50 @@ export class NotationParser {
 		}
 
 		return encounters;
+	}
+
+	private static parseEntity(match: any, content: string, entity: Map<string, ParsedEntity>){
+		const name = match[1].trim();
+		const tagsStr = match[3] || "";
+		const tags = tagsStr
+			.split("|")
+			.map((t: string) => t.trim())
+			.filter((t: string) => t);
+
+		// Find line number
+		const lineNum = this.getLineNumber(content, match.index);
+
+		if (entity.has(name)) {
+			// Update existing entry
+			const existing = entity.get(name)!;
+			existing.mentions.push(lineNum);
+			existing.lastMention = lineNum;
+			// When an NPC is updated, overwrite all existing tags
+			const newTags: Array<string> = []
+			tags.forEach((tag: string) => {
+				if (tag[0]?.contains('+')) {
+					existing.tags.push(tag.slice(1, tag.length));
+				} else if (tag[0]?.contains('-')) {
+					const tagText = tag.slice(1, tag.length)
+					const removeIndex = existing.tags.indexOf(tagText)
+					existing.tags.splice(removeIndex, 1)
+				} else {
+					newTags.push(tag)
+				}
+			});
+			if (newTags.length !== 0) {
+				existing.tags = newTags;
+			};
+		} else {
+			// Create new entry
+			 entity.set(name, {
+				name,
+				tags,
+				mentions: [lineNum],
+				firstMention: lineNum,
+				lastMention: lineNum,
+			});
+		}	
 	}
 
 	/**

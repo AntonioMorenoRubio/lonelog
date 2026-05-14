@@ -8,10 +8,8 @@ import { t } from "../i18n/i18n";
 import {
 	NotationParser,
 	ParsedElements,
-	ParsedNPC,
-	ParsedLocation,
 	ParsedThread,
-	ParsedPC,
+	ParsedEntity,
 } from "../utils/parser";
 
 export const THREAD_VIEW_TYPE = "lonelog-thread-view";
@@ -138,7 +136,7 @@ export class ThreadBrowserView extends ItemView {
 
 	private renderPCSection(
 		container: HTMLElement,
-		pcs: Map<string, ParsedPC>
+		pcs: Map<string, ParsedEntity>
 	): void {
 		const section = container.createEl("div", {
 			cls: "lonelog-thread-section",
@@ -164,7 +162,7 @@ export class ThreadBrowserView extends ItemView {
 
 	private renderNPCSection(
 		container: HTMLElement,
-		npcs: Map<string, ParsedNPC>
+		npcs: Map<string, ParsedEntity>
 	): void {
 		const section = container.createEl("div", {
 			cls: "lonelog-thread-section",
@@ -190,7 +188,7 @@ export class ThreadBrowserView extends ItemView {
 
 	private renderLocationSection(
 		container: HTMLElement,
-		locations: Map<string, ParsedLocation>
+		locations: Map<string, ParsedEntity>
 	): void {
 		const section = container.createEl("div", {
 			cls: "lonelog-thread-section",
