@@ -646,6 +646,7 @@ export class NotationParser {
 			.map((t: string) => t.trim())
 			.filter((t: string) => t);
 
+
 		// Find line number
 		const lineNum = this.getLineNumber(content, match.index);
 
@@ -654,19 +655,30 @@ export class NotationParser {
 			const existing = entity.get(name)!;
 			existing.mentions.push(lineNum);
 			existing.lastMention = lineNum;
-			// When an NPC is updated, overwrite all existing tags
+
+			// When an NPC is updated, update tags depending on symbol:
+			// - '-' removes a tag
+			// - '+' adds a tag
+			// - '->' replaces a tag (e.g. "tag1->tag2" replaces "tag1" with "tag2")
+			// - If no symbol, replace all tags with the new set
 			const newTags: Array<string> = []
+
 			tags.forEach((tag: string) => {
-				if (tag[0]?.contains('+')) {
+				if(tag.contains('->')){
+					const tagText = tag.split('->');
+					const changedIndex = existing.tags.indexOf(tagText[0].trim());
+					existing.tags[changedIndex] = tagText[1]
+				} else if (tag[0]?.contains('+')) {
 					existing.tags.push(tag.slice(1, tag.length));
 				} else if (tag[0]?.contains('-')) {
-					const tagText = tag.slice(1, tag.length)
-					const removeIndex = existing.tags.indexOf(tagText)
-					existing.tags.splice(removeIndex, 1)
-				} else {
+					const tagText = tag.slice(1, tag.length);
+					const removeIndex = existing.tags.indexOf(tagText);
+					existing.tags.splice(removeIndex, 1);
+				}else{
 					newTags.push(tag)
-				}
+				} 
 			});
+
 			if (newTags.length !== 0) {
 				existing.tags = newTags;
 			};
