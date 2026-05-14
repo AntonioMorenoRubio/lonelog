@@ -180,12 +180,22 @@ export class NotationParser {
 				existing.mentions.push(lineNum);
 				existing.lastMention = lineNum;
 				// When an NPC is updated, overwrite all existing tags
-				if(match.toString()[1].contains('#')) continue;
+				if(match.toString()[1]?.contains('#')) continue;
 				const newTags = [];
 				tags.forEach((tag) => {
-					newTags.push(tag)
+					if(tag[0]?.contains('+')){
+						existing.tags.push(tag.slice(1, tag.length));
+					}else if(tag[0]?.contains('-')){
+						const tagText = tag.slice(1, tag.length)
+						const removeIndex = existing.tags.indexOf(tagText)
+						existing.tags.splice(removeIndex, 1)
+					} else {
+						newTags.push(tag)
+					}
 				});
-				existing.tags = newTags;
+				if(newTags.length !== 0){
+					existing.tags = newTags;
+				};
 			} else {
 				// Create new entry
 				npcs.set(name, {
