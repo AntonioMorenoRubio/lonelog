@@ -123,12 +123,27 @@ export function tokenizeLine(lineText: string): Token[] {
 		} else if (tagText.startsWith("[Wealth:") || tagText.startsWith("[#Wealth:")) {
 			type = "wealth";
 		}
+
+		if(tagText.contains("->")) {
+			inlineTokens.push({
+				start: m.index,
+				end: tagText.indexOf("->"),
+				type: type
+			});
+			inlineTokens.push({
+				start: tagText.indexOf("->")+2,
+				end: tagText.length,
+				type: type
+			});
+		} else if(!tagText.contains("->")){
+			inlineTokens.push({
+				start: m.index,
+				end: m.index + tagText.length,
+				type: type,
+			});
+		}
+
 		
-		inlineTokens.push({
-			start: m.index,
-			end: m.index + tagText.length,
-			type: type,
-		});
 	}
 
 	// Sort inline tokens by position
