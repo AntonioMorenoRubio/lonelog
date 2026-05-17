@@ -430,7 +430,7 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 
 		if (isReference) {
 			// Just close the reference tag
-			insertion = `${suggestion.name}]`;
+			insertion = `${suggestion.name}`;
 		} else {
 			// Complete the tag with placeholder for additional info
 			switch (suggestion.type) {
@@ -446,7 +446,7 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 					}
 					break;
 				case "thread":
-					insertion = `${suggestion.name}|Open]`;
+					insertion = `${suggestion.name}|Open`;
 					break;
 				case "clock": {
 					// Detect prefix (E: or Clock:)
