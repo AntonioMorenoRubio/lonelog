@@ -661,15 +661,15 @@ If your plugin does not need CSS, delete this file.
    Uses the same CSS variables set by applyHighlightColors().
    ============================================================ */
 
-/* Force line wrap in Live Preview */
-.ll-ed-line {
-	white-space: pre-wrap !important;
+/* Force line wrap in Live Preview — higher specificity via .cm-editor avoids !important */
+.cm-editor .ll-ed-line {
+	white-space: pre-wrap;
 	word-break: break-word;
 }
 
-.ll-ed-block-line {
-	font-family: var(--ll-font-family, var(--font-monospace)) !important;
-	font-size: var(--ll-font-size, inherit) !important;
+.cm-editor .ll-ed-block-line {
+	font-family: var(--ll-font-family, var(--font-monospace));
+	font-size: var(--ll-font-size, inherit);
 }
 
 /* Token symbols at line start */
@@ -1465,24 +1465,29 @@ If your plugin does not need CSS, delete this file.
 	font-family: var(--font-monospace);
 }
 
-.ll-status-cleared {
-	background-color: rgba(34, 197, 94, 0.15) !important;
-	color: #22c55e !important;
+/* Compound selectors override .ll-room-status and .ll-thread-status base styles — no !important needed */
+.ll-room-status.ll-status-cleared,
+.ll-thread-status.ll-status-cleared {
+	background-color: rgba(34, 197, 94, 0.15);
+	color: #22c55e;
 }
 
-.ll-status-active {
-	background-color: rgba(59, 130, 246, 0.15) !important;
-	color: #3b82f6 !important;
+.ll-room-status.ll-status-active,
+.ll-thread-status.ll-status-active {
+	background-color: rgba(59, 130, 246, 0.15);
+	color: #3b82f6;
 }
 
-.ll-status-unexplored {
-	background-color: rgba(113, 113, 122, 0.15) !important;
-	color: #71717a !important;
+.ll-room-status.ll-status-unexplored,
+.ll-thread-status.ll-status-unexplored {
+	background-color: rgba(113, 113, 122, 0.15);
+	color: #71717a;
 }
 
-.ll-status-looted {
-	background-color: rgba(202, 138, 4, 0.15) !important;
-	color: #ca8a04 !important;
+.ll-room-status.ll-status-looted,
+.ll-thread-status.ll-status-looted {
+	background-color: rgba(202, 138, 4, 0.15);
+	color: #ca8a04;
 }
 
 .ll-room-exits {
