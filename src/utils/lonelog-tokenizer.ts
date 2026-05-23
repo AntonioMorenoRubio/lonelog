@@ -23,7 +23,12 @@ export type TokenType =
 	| "narrative"   // \--- or ---\ at line start
 	| "round"       // Rd# at line start
 	| "combat-block" // [COMBAT] at line start
+	| "dungeon-block" // [DUNGEON STATUS] at line start
 	| "foe"         // [F:...] tag
+	| "room"        // [R:...] tag
+	| "resources-block" // [RESOURCES] at line start
+	| "inventory"   // [Inv:...] tag
+	| "wealth"      // [Wealth:...] tag
 	| "text";       // plain text
 
 export interface Token {
@@ -47,6 +52,8 @@ const LINE_START_PATTERNS: Array<{ pattern: RegExp; type: Exclude<TokenType, "re
 	{ pattern: /^(?:={3,}.+?={3,}|##\s+Sesi[óo]n\b|##\s+Session\b)/i, type: "header" },
 	{ pattern: /^Rd\d+\b/i, type: "round" },
 	{ pattern: /^\[\/?COMBAT\]/i, type: "combat-block" },
+	{ pattern: /^\[\/?DUNGEON STATUS\]/i, type: "dungeon-block" },
+	{ pattern: /^\[\/?RESOURCES\]/i, type: "resources-block" },
 	{ pattern: /^(?:PC|N|[^:]+?)\s?(?:\([^)]+\))?:\s*".*?"/i, type: "dialogue" },
 ];
 
@@ -54,7 +61,7 @@ const LINE_START_PATTERNS: Array<{ pattern: RegExp; type: Exclude<TokenType, "re
 const RESULT_ARROW_RE = /->/g;
 
 /** Bracket tag pattern — supports multi-line and inline update suffix like [Clock:Name 0/6 ->2/6] */
-const BRACKET_TAG_RE = /\[(?:#?(?:N|L|PC|Thread|E|Clock|Track|Timer|F)):[^\]]*(?:->\s*[\d/]+)?\]/g;
+const BRACKET_TAG_RE = /\[(?:#?(?:N|L|PC|Thread|E|Clock|Track|Timer|F|R|Inv|Wealth)):[^\]]*(?:->\s*[\d/]+)?\]/g;
 
 // ---------------------------------------------------------------------------
 // Tokenizer
@@ -106,13 +113,37 @@ export function tokenizeLine(lineText: string): Token[] {
 	let m: RegExpExecArray | null;
 	while ((m = BRACKET_TAG_RE.exec(lineText)) !== null) {
 		const tagText = m[0];
-		const type: TokenType = tagText.startsWith("[F:") || tagText.startsWith("[#F:") ? "foe" : "tag";
+		let type: TokenType = "tag";
+		if (tagText.startsWith("[F:") || tagText.startsWith("[#F:")) {
+			type = "foe";
+		} else if (tagText.startsWith("[R:") || tagText.startsWith("[#R:")) {
+			type = "room";
+		} else if (tagText.startsWith("[Inv:") || tagText.startsWith("[#Inv:")) {
+			type = "inventory";
+		} else if (tagText.startsWith("[Wealth:") || tagText.startsWith("[#Wealth:")) {
+			type = "wealth";
+		}
+
+		if(tagText.contains("->")) {
+			inlineTokens.push({
+				start: m.index,
+				end: tagText.indexOf("->"),
+				type: type
+			});
+			inlineTokens.push({
+				start: tagText.indexOf("->")+2,
+				end: tagText.length,
+				type: type
+			});
+		} else if(!tagText.contains("->")){
+			inlineTokens.push({
+				start: m.index,
+				end: m.index + tagText.length,
+				type: type,
+			});
+		}
+
 		
-		inlineTokens.push({
-			start: m.index,
-			end: m.index + tagText.length,
-			type: type,
-		});
 	}
 
 	// Sort inline tokens by position

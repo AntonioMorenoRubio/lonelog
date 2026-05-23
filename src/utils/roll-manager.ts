@@ -4,6 +4,7 @@
  */
 
 import { DiceRoller } from "./dice-roller";
+import { AdvancedDiceRoller } from "./advanced-dice-roller";
 import { TableResolver, TableDefinition } from "./table-resolver";
 import { LonelogSettings } from "../settings";
 
@@ -31,10 +32,13 @@ export class RollManager {
 				const tableName = tblMatch[1].trim().toLowerCase();
 				const dice = tblMatch[2];
 				const table = tables.get(tableName);
-				
+
 				if (table) {
 					notationToRoll = dice;
-					const rollResult = DiceRoller.roll(dice);
+					const rollResult = settings.enableDiceNotationAddon
+						? AdvancedDiceRoller.roll(dice)
+						: DiceRoller.roll(dice);
+
 					if (rollResult) {
 						tableOutcome = TableResolver.resolveEntry(table, rollResult.total) || undefined;
 						return DiceRoller.formatResult(lineText, rollResult, {
@@ -43,7 +47,8 @@ export class RollManager {
 							showHigh: settings.showDiceHigh,
 							lowLabel: settings.diceLowLabel,
 							showLow: settings.showDiceLow,
-							tableOutcome
+							tableOutcome,
+							roller: settings.enableDiceNotationAddon ? AdvancedDiceRoller.roll : DiceRoller.roll
 						});
 					}
 				}
@@ -59,7 +64,10 @@ export class RollManager {
 
 			if (table) {
 				notationToRoll = dice;
-				const rollResult = DiceRoller.roll(dice);
+				const rollResult = settings.enableDiceNotationAddon
+					? AdvancedDiceRoller.roll(dice)
+					: DiceRoller.roll(dice);
+
 				if (rollResult) {
 					tableOutcome = TableResolver.resolveEntry(table, rollResult.total) || undefined;
 					return DiceRoller.formatResult(lineText, rollResult, {
@@ -68,14 +76,18 @@ export class RollManager {
 						showHigh: settings.showDiceHigh,
 						lowLabel: settings.diceLowLabel,
 						showLow: settings.showDiceLow,
-						tableOutcome
+						tableOutcome,
+						roller: settings.enableDiceNotationAddon ? AdvancedDiceRoller.roll : DiceRoller.roll
 					});
 				}
 			}
 		}
 
 		// --- Case C: Standard roll ---
-		const result = DiceRoller.roll(notationToRoll);
+		const result = settings.enableDiceNotationAddon
+			? AdvancedDiceRoller.roll(notationToRoll)
+			: DiceRoller.roll(notationToRoll);
+
 		if (result) {
 			return DiceRoller.formatResult(lineText, result, {
 				detailMode: settings.diceDetailMode,
@@ -83,6 +95,7 @@ export class RollManager {
 				showHigh: settings.showDiceHigh,
 				lowLabel: settings.diceLowLabel,
 				showLow: settings.showDiceLow,
+				roller: settings.enableDiceNotationAddon ? AdvancedDiceRoller.roll : DiceRoller.roll
 			});
 		}
 

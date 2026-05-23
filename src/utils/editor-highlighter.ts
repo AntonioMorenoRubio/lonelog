@@ -9,6 +9,7 @@ import { Range, RangeSetBuilder } from "@codemirror/state";
 import { EditorState } from "@codemirror/state";
 import { tokenizeLine, getTokenClass } from "./lonelog-tokenizer";
 import { DiceRoller } from "./dice-roller";
+import { CardRoller } from "./card-roller";
 import { TableResolver } from "./table-resolver";
 import { RollManager } from "./roll-manager";
 import { LonelogSettings } from "../settings";
@@ -131,6 +132,58 @@ class DiceWidget extends WidgetType {
 }
 
 // ---------------------------------------------------------------------------
+// Card Widget
+// ---------------------------------------------------------------------------
+
+class CardWidget extends WidgetType {
+	constructor(
+		private readonly notation: string,
+		private readonly lineText: string,
+		private readonly settings: LonelogSettings
+	) {
+		super();
+	}
+
+	toDOM(view: EditorView): HTMLElement {
+		const span = document.createElement("span");
+		span.innerText = "🎴";
+		span.className = "lonelog-card-widget lonelog-dice-widget";
+		span.title = `Draw ${this.notation}`;
+		span.setAttribute("role", "button");
+
+		span.onmousedown = (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			this.draw(view, span);
+		};
+		span.ontouchstart = (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			this.draw(view, span);
+		};
+
+		return span;
+	}
+
+	private draw(view: EditorView, element: HTMLElement): void {
+		const pos = view.posAtDOM(element);
+		if (pos === null) return;
+		const line = view.state.doc.lineAt(pos);
+		
+		const newLineText = CardRoller.processLine(line.text, this.settings.inlineCardDescriptions);
+		if (newLineText && newLineText !== line.text) {
+			view.dispatch({
+				changes: { from: line.from, to: line.to, insert: newLineText }
+			});
+		}
+	}
+
+	ignoreEvent(event: Event): boolean {
+		return event.type === "mousedown" || event.type === "click" || event.type === "touchstart";
+	}
+}
+
+// ---------------------------------------------------------------------------
 // Decoration builder
 // ---------------------------------------------------------------------------
 
@@ -138,7 +191,7 @@ function buildDecorations(view: EditorView, settings: LonelogSettings): Decorati
 	const builder = new RangeSetBuilder<Decoration>();
 	const decorations: Array<Range<Decoration>> = [];
 
-	const allBlocks = settings.enableGlobalNotation ? [] : findLonelogBlocks(view.state);
+	const allBlocks = findLonelogBlocks(view.state);
 
 	for (const { from, to } of view.visibleRanges) {
 		const doc = view.state.doc;
@@ -150,7 +203,8 @@ function buildDecorations(view: EditorView, settings: LonelogSettings): Decorati
 			
 			for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
 				const line = doc.line(lineNum);
-				processLineDecorations(line, decorations, settings);
+				const isBlock = allBlocks.some(b => line.from >= b.from && line.to <= b.to);
+				processLineDecorations(line, decorations, settings, isBlock);
 			}
 		} else {
 			// Filter blocks that overlap with the visible range
@@ -163,7 +217,7 @@ function buildDecorations(view: EditorView, settings: LonelogSettings): Decorati
 				for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
 					const line = doc.line(lineNum);
 					if (line.from < block.from || line.to > block.to) continue;
-					processLineDecorations(line, decorations, settings);
+					processLineDecorations(line, decorations, settings, true);
 				}
 			}
 		}
@@ -183,7 +237,8 @@ function buildDecorations(view: EditorView, settings: LonelogSettings): Decorati
 function processLineDecorations(
 	line: { from: number; to: number; text: string },
 	decorations: Array<Range<Decoration>>,
-	settings: LonelogSettings
+	settings: LonelogSettings,
+	isBlock: boolean
 ): void {
 	const lineText = line.text;
 
@@ -191,7 +246,7 @@ function processLineDecorations(
 	decorations.push({
 		from: line.from,
 		to: line.from,
-		value: Decoration.line({ class: "ll-ed-line" }),
+		value: Decoration.line({ class: isBlock ? "ll-ed-line ll-ed-block-line" : "ll-ed-line" }),
 	});
 
 	// Tokenize using shared logic
@@ -222,16 +277,30 @@ function processLineDecorations(
 			lineText.startsWith(" ") || 
 			lineText.startsWith("\t"))
 	) {
-		const notation = DiceRoller.extractNotation(lineText);
-		if (notation) {
+		const cardRequests = settings.enableCardAddon ? CardRoller.extractCardRequests(lineText) : [];
+		if (cardRequests.length > 0) {
+			// Card draw requested
 			decorations.push({
 				from: line.to,
 				to: line.to,
 				value: Decoration.widget({
-					widget: new DiceWidget(notation, settings),
+					widget: new CardWidget(cardRequests.map(c => c.original).join(", "), lineText, settings),
 					side: 1,
 				}),
 			});
+		} else {
+			// standard dice roller
+			const notation = DiceRoller.extractNotation(lineText);
+			if (notation && DiceRoller.roll(notation) !== null) {
+				decorations.push({
+					from: line.to,
+					to: line.to,
+					value: Decoration.widget({
+						widget: new DiceWidget(notation, settings),
+						side: 1,
+					}),
+				});
+			}
 		}
 	}
 }

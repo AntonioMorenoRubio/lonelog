@@ -7,6 +7,7 @@
 import { App, MarkdownPostProcessorContext, TFile } from "obsidian";
 import { tokenizeLine, getTokenClass } from "./lonelog-tokenizer";
 import { DiceRoller } from "./dice-roller";
+import { CardRoller } from "./card-roller";
 import { TableResolver } from "./table-resolver";
 import { RollManager } from "./roll-manager";
 import { LonelogSettings } from "../settings";
@@ -124,6 +125,56 @@ function renderLine(
 					e.preventDefault();
 					e.stopPropagation();
 					void doRoll();
+				}
+			});
+		}
+	}
+	
+	// Add 🎴 button if it's a card notation directly on the line
+	if (settings.enableCardAddon) {
+		const cardRequests = CardRoller.extractCardRequests(rawLine);
+		if (cardRequests.length > 0) {
+			const notation = cardRequests.map(c => c.original).join(", ");
+			const btn = lineEl.createEl("span", {
+				cls: "lonelog-card-widget lonelog-dice-widget",
+				text: "🎴",
+				attr: { title: `Draw ${notation}`, role: "button", tabindex: "0" },
+			});
+
+			const doDraw = async (): Promise<void> => {
+				const section = ctx.getSectionInfo(blockEl);
+				if (!section) return;
+
+				const file = app.vault.getAbstractFileByPath(ctx.sourcePath);
+				if (!(file instanceof TFile)) return;
+
+				const absoluteLineNum = section.lineStart + lineIndexInBlock;
+
+				const content = await app.vault.read(file);
+				const docLines = content.split("\n");
+				const rawLineAtRoll = docLines[absoluteLineNum];
+				if (rawLineAtRoll === undefined) return;
+
+				const newLineText = CardRoller.processLine(rawLineAtRoll, settings.inlineCardDescriptions);
+				
+				if (newLineText && newLineText !== rawLineAtRoll) {
+					await app.vault.process(file, (data) => {
+						const lines = data.split("\n");
+						if (absoluteLineNum < lines.length) lines[absoluteLineNum] = newLineText;
+						return lines.join("\n");
+					});
+				}
+			};
+
+			btn.addEventListener("click", (e) => {
+				e.stopPropagation();
+				void doDraw();
+			});
+			btn.addEventListener("keydown", (e: KeyboardEvent) => {
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					e.stopPropagation();
+					void doDraw();
 				}
 			});
 		}

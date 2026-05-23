@@ -3,15 +3,8 @@
  * Extracts structured data from Lonelog notation in markdown files
  */
 
-export interface ParsedNPC {
-	name: string;
-	tags: string[];
-	mentions: number[];
-	firstMention: number;
-	lastMention: number;
-}
 
-export interface ParsedLocation {
+export interface ParsedEntity{
 	name: string;
 	tags: string[];
 	mentions: number[];
@@ -27,14 +20,6 @@ export interface ParsedThread {
 	lastMention: number;
 }
 
-export interface ParsedPC {
-	name: string;
-	tags: string[];
-	mentions: number[];
-	firstMention: number;
-	lastMention: number;
-}
-
 export interface ParsedProgress {
 	type: "clock" | "track" | "timer";
 	name: string;
@@ -43,9 +28,33 @@ export interface ParsedProgress {
 	line: number;
 }
 
+export interface ParsedRoom {
+	id: string;
+	status: string[];
+	description?: string;
+	exits: string[];
+	mentions: number[];
+	firstMention: number;
+	lastMention: number;
+}
+
 export interface ParsedScene {
 	number: string;
 	context: string;
+	line: number;
+}
+
+export interface ParsedItem {
+	name: string;
+	quantity: string;
+	properties: string[];
+	mentions: number[];
+	firstMention: number;
+	lastMention: number;
+}
+
+export interface ParsedWealth {
+	currencies: Map<string, string>; // name -> quantity (e.g., "Gold" -> "45")
 	line: number;
 }
 
@@ -74,10 +83,13 @@ export interface ParsedCombatEncounter {
 }
 
 export interface ParsedElements {
-	npcs: Map<string, ParsedNPC>;
-	locations: Map<string, ParsedLocation>;
+	npcs: Map<string, ParsedEntity>;
+	locations: Map<string, ParsedEntity>;
 	threads: Map<string, ParsedThread>;
-	pcs: Map<string, ParsedPC>;
+	pcs: Map<string, ParsedEntity>;
+	rooms: Map<string, ParsedRoom>;
+	inventory: Map<string, ParsedItem>;
+	wealth: Map<string, string>; // Global/current wealth state
 	progress: ParsedProgress[];
 	sessions: ParsedSession[];
 	combat: ParsedCombatEncounter[];
@@ -103,11 +115,16 @@ export class NotationParser {
 		const locations = this.parseLocations(content);
 		const threads = this.parseThreads(content);
 		const pcs = this.parsePCs(content);
+		const rooms = this.parseRooms(content);
 		const progress = this.parseProgress(content);
 		const sessions = this.parseSessions(content);
 		const combat = this.parseCombatEncounters(content);
+		const inventory = this.parseInventory(content);
+		const wealth = this.parseWealth(content);
 
-		const result = { npcs, locations, threads, pcs, progress, sessions, combat };
+		const result: ParsedElements = { 
+			npcs, locations, threads, pcs, rooms, progress, sessions, combat, inventory, wealth 
+		};
 
 		// Update cache
 		this.cache = { content, result };
@@ -125,46 +142,16 @@ export class NotationParser {
 	/**
 	 * Parse NPC tags: [N:Name|tag1|tag2]
 	 */
-	private static parseNPCs(content: string): Map<string, ParsedNPC> {
+	private static parseNPCs(content: string): Map<string, ParsedEntity> {
 		const npcRegex = /\[#?N:([^\]|]+)(\|([^\]]*))?\]/g;
-		const npcs = new Map<string, ParsedNPC>();
+		const npcs = new Map<string, ParsedEntity>();
 
 		let match;
 		while ((match = npcRegex.exec(content)) !== null) {
 			if (!match[1]) continue;
-			const name = match[1].trim();
-			const tagsStr = match[3] || "";
-			const tags = tagsStr
-				.split("|")
-				.map((t) => t.trim())
-				.filter((t) => t);
-
-			// Find line number
-			const lineNum = this.getLineNumber(content, match.index);
-
-			if (npcs.has(name)) {
-				// Update existing entry
-				const existing = npcs.get(name)!;
-				existing.mentions.push(lineNum);
-				existing.lastMention = lineNum;
-				// Merge tags (keep unique)
-				tags.forEach((tag) => {
-					if (!existing.tags.includes(tag)) {
-						existing.tags.push(tag);
-					}
-				});
-			} else {
-				// Create new entry
-				npcs.set(name, {
-					name,
-					tags,
-					mentions: [lineNum],
-					firstMention: lineNum,
-					lastMention: lineNum,
-				});
-			}
+			if (match.toString()[1]?.contains('#')) continue;
+			this.parseEntity(match, content, npcs)
 		}
-
 		return npcs;
 	}
 
@@ -173,40 +160,15 @@ export class NotationParser {
 	 */
 	private static parseLocations(
 		content: string
-	): Map<string, ParsedLocation> {
+	): Map<string, ParsedEntity> {
 		const locationRegex = /\[#?L:([^\]|]+)(\|([^\]]*))?\]/g;
-		const locations = new Map<string, ParsedLocation>();
+		const locations = new Map<string, ParsedEntity>();
 
 		let match;
 		while ((match = locationRegex.exec(content)) !== null) {
 			if (!match[1]) continue;
-			const name = match[1].trim();
-			const tagsStr = match[3] || "";
-			const tags = tagsStr
-				.split("|")
-				.map((t) => t.trim())
-				.filter((t) => t);
-
-			const lineNum = this.getLineNumber(content, match.index);
-
-			if (locations.has(name)) {
-				const existing = locations.get(name)!;
-				existing.mentions.push(lineNum);
-				existing.lastMention = lineNum;
-				tags.forEach((tag) => {
-					if (!existing.tags.includes(tag)) {
-						existing.tags.push(tag);
-					}
-				});
-			} else {
-				locations.set(name, {
-					name,
-					tags,
-					mentions: [lineNum],
-					firstMention: lineNum,
-					lastMention: lineNum,
-				});
-			}
+			if (match.toString()[1]?.contains('#')) continue;
+			this.parseEntity(match, content, locations);
 		}
 
 		return locations;
@@ -248,42 +210,88 @@ export class NotationParser {
 	}
 
 	/**
+	 * Parse Room tags: [R:ID|status|desc|exits] or [#R:ID]
+	 */
+	private static parseRooms(content: string): Map<string, ParsedRoom> {
+		const roomRegex = /\[#?R:([^\]|]+)(\|([^\]]*))?\]/g;
+		const rooms = new Map<string, ParsedRoom>();
+
+		let match;
+		while ((match = roomRegex.exec(content)) !== null) {
+			if (!match[1]) continue;
+			const id = match[1].trim();
+			const partsStr = match[3] || "";
+			const parts = partsStr.split("|").map(p => p.trim());
+			
+			const statusPart = parts[0] || "";
+			const description = parts[1] || undefined;
+			const exitsStr = parts[2] || "";
+			
+			// Handle status (including +prefix for adding)
+			let newStatuses = statusPart.split(",").map(s => s.trim()).filter(s => s);
+			
+			const lineNum = this.getLineNumber(content, match.index);
+			
+			if (rooms.has(id)) {
+				const existing = rooms.get(id)!;
+				existing.mentions.push(lineNum);
+				existing.lastMention = lineNum;
+				
+				// Update status
+				if (statusPart.startsWith("+")) {
+					// Additive status
+					const toAdd = statusPart.substring(1).split(",").map(s => s.trim()).filter(s => s);
+					toAdd.forEach(s => {
+						if (!existing.status.includes(s)) existing.status.push(s);
+					});
+				} else if (newStatuses.length > 0) {
+					// Replace status
+					existing.status = newStatuses;
+				}
+				
+				if (description) existing.description = description;
+				
+				// Handle exits
+				if (exitsStr.startsWith("exits ")) {
+					const exits = exitsStr.replace("exits ", "").split(",").map(e => e.trim()).filter(e => e);
+					exits.forEach(e => {
+						if (!existing.exits.includes(e)) existing.exits.push(e);
+					});
+				}
+			} else {
+				// Create new room
+				const exits = exitsStr.startsWith("exits ") 
+					? exitsStr.replace("exits ", "").split(",").map(e => e.trim()).filter(e => e)
+					: [];
+					
+				rooms.set(id, {
+					id,
+					status: newStatuses,
+					description,
+					exits,
+					mentions: [lineNum],
+					firstMention: lineNum,
+					lastMention: lineNum
+				});
+			}
+		}
+
+		return rooms;
+	}
+
+	/**
 	 * Parse PC tags: [PC:Name|tag1|tag2]
 	 */
-	private static parsePCs(content: string): Map<string, ParsedPC> {
+	private static parsePCs(content: string): Map<string, ParsedEntity> {
 		const pcRegex = /\[#?PC:([^\]|]+)(\|([^\]]*))?\]/g;
-		const pcs = new Map<string, ParsedPC>();
+		const pcs = new Map<string, ParsedEntity>();
 
 		let match;
 		while ((match = pcRegex.exec(content)) !== null) {
 			if (!match[1]) continue;
-			const name = match[1].trim();
-			const tagsStr = match[3] || "";
-			const tags = tagsStr
-				.split("|")
-				.map((t) => t.trim())
-				.filter((t) => t);
-
-			const lineNum = this.getLineNumber(content, match.index);
-
-			if (pcs.has(name)) {
-				const existing = pcs.get(name)!;
-				existing.mentions.push(lineNum);
-				existing.lastMention = lineNum;
-				tags.forEach((tag) => {
-					if (!existing.tags.includes(tag)) {
-						existing.tags.push(tag);
-					}
-				});
-			} else {
-				pcs.set(name, {
-					name,
-					tags,
-					mentions: [lineNum],
-					firstMention: lineNum,
-					lastMention: lineNum,
-				});
-			}
+			if (match.toString()[1]?.contains('#')) continue;
+			this.parseEntity(match, content, pcs);	
+			
 		}
 
 		return pcs;
@@ -361,6 +369,112 @@ export class NotationParser {
 		}
 
 		return Array.from(seen.values());
+	}
+
+	/**
+	 * Parse Inventory tags: [Inv:Item|qty|props]
+	 * Supports deltas: [Inv:Item-1], [Inv:Item|3->2], etc.
+	 */
+	private static parseInventory(content: string): Map<string, ParsedItem> {
+		const invRegex = /\[#?Inv:([^\]|]+)(\|([^\]]*))?\]/g;
+		const inventory = new Map<string, ParsedItem>();
+
+		let match;
+		while ((match = invRegex.exec(content)) !== null) {
+			if (!match[1]) continue;
+			const namePart = match[1].trim();
+			const detailsPart = match[3] || "";
+
+			// Handle shorthand deltas like [Inv:Torch-1] in the name field
+			let name = namePart;
+			let quantity = "";
+			
+			const deltaMatch = namePart.match(/^(.+?)([+-]\d+)$/);
+			if (deltaMatch && deltaMatch[1]) {
+				name = deltaMatch[1].trim();
+				quantity = deltaMatch[2] || ""; // e.g. "-1"
+			}
+
+			const parts = detailsPart.split("|").map(p => p.trim());
+			if (parts[0] && !deltaMatch) {
+				quantity = parts[0];
+			}
+			const properties = parts.slice(1).filter(p => p);
+
+			const lineNum = this.getLineNumber(content, match.index);
+
+			if (inventory.has(name)) {
+				const existing = inventory.get(name)!;
+				existing.mentions.push(lineNum);
+				existing.lastMention = lineNum;
+
+				// Update quantity
+				if (quantity.includes("->")) {
+					existing.quantity = quantity.split("->").pop()?.trim() || existing.quantity;
+				} else if (quantity.match(/^[+-]\d+$/)) {
+					// Delta update if existing is numeric
+					const currentVal = parseInt(existing.quantity);
+					if (!isNaN(currentVal)) {
+						existing.quantity = (currentVal + parseInt(quantity)).toString();
+					} else {
+						existing.quantity = quantity;
+					}
+				} else if (quantity) {
+					existing.quantity = quantity;
+				}
+
+				// Merge properties
+				properties.forEach(p => {
+					if (!existing.properties.includes(p)) existing.properties.push(p);
+				});
+			} else {
+				inventory.set(name, {
+					name,
+					quantity: quantity.includes("->") ? quantity.split("->").pop()?.trim() || "" : quantity,
+					properties,
+					mentions: [lineNum],
+					firstMention: lineNum,
+					lastMention: lineNum
+				});
+			}
+		}
+
+		return inventory;
+	}
+
+	/**
+	 * Parse Wealth tags: [Wealth:Gold 10|Silver 5]
+	 * Returns the most recent global wealth state
+	 */
+	private static parseWealth(content: string): Map<string, string> {
+		const wealthRegex = /\[#?Wealth:([^\]]+)\]/g;
+		const currentState = new Map<string, string>();
+
+		let match;
+		while ((match = wealthRegex.exec(content)) !== null) {
+			if (!match[1]) continue;
+			const parts = match[1].split("|").map(p => p.trim());
+			
+			parts.forEach(part => {
+				// Match "Gold 10" or "Gold+5" or "Gold 10->15"
+				const m = part.match(/^([^+\-\s>]+)\s*([+\-\d>→].*)$/);
+				if (m && m[1] && m[2]) {
+					const currency = m[1].trim();
+					let value = m[2].trim().replace("→", "->");
+
+					if (value.includes("->")) {
+						currentState.set(currency, value.split("->").pop()?.trim() || "0");
+					} else if (value.match(/^[+-]\d+$/)) {
+						const currentVal = parseInt(currentState.get(currency) || "0");
+						currentState.set(currency, (currentVal + parseInt(value)).toString());
+					} else {
+						currentState.set(currency, value);
+					}
+				}
+			});
+		}
+
+		return currentState;
 	}
 
 	/**
@@ -522,6 +636,66 @@ export class NotationParser {
 		}
 
 		return encounters;
+	}
+
+	private static parseEntity(match: any, content: string, entity: Map<string, ParsedEntity>){
+		const name = match[1].trim();
+		const tagsStr = match[3] || "";
+		const tags = tagsStr
+			.split("|")
+			.map((t: string) => t.trim())
+			.filter((t: string) => t);
+
+
+		// Find line number
+		const lineNum = this.getLineNumber(content, match.index);
+
+		if (entity.has(name)) {
+			// Update existing entry
+			const existing = entity.get(name)!;
+			existing.mentions.push(lineNum);
+			existing.lastMention = lineNum;
+
+			// When an NPC is updated, update tags depending on symbol:
+			// - '-' removes a tag
+			// - '+' adds a tag
+			// - '->' replaces a tag (e.g. "tag1->tag2" replaces "tag1" with "tag2")
+			// - If no symbol, replace all tags with the new set
+			const newTags: Array<string> = []
+
+			tags.forEach((tag: string) => {
+				if(tag.contains('->')){
+					const tagText: string[] = tag.split('->');
+					if (tagText[0] !== undefined && tagText[1] !== undefined) {
+						const changedIndex: number = existing.tags.indexOf(tagText[0].trim());
+						if (changedIndex !== -1) {
+							existing.tags[changedIndex] = tagText[1].trim();
+						}
+					}
+				} else if (tag[0]?.contains('+')) {
+					existing.tags.push(tag.slice(1, tag.length));
+				} else if (tag[0]?.contains('-')) {
+					const tagText = tag.slice(1, tag.length);
+					const removeIndex = existing.tags.indexOf(tagText);
+					existing.tags.splice(removeIndex, 1);
+				}else{
+					newTags.push(tag)
+				} 
+			});
+
+			if (newTags.length !== 0) {
+				existing.tags = newTags;
+			};
+		} else {
+			// Create new entry
+			 entity.set(name, {
+				name,
+				tags,
+				mentions: [lineNum],
+				firstMention: lineNum,
+				lastMention: lineNum,
+			});
+		}	
 	}
 
 	/**

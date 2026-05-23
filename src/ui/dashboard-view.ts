@@ -3,21 +3,24 @@
  * A unified, premium interface for managing all campaign elements in one place.
  */
 
-import { ItemView, TFile, WorkspaceLeaf, debounce } from "obsidian";
+import { ItemView, TFile, WorkspaceLeaf, debounce, setIcon } from "obsidian";
 import { NotationParser, ParsedElements } from "../utils/parser";
 import { t } from "../i18n/i18n";
+import LonelogPlugin from "../main";
 
 export const DASHBOARD_VIEW_TYPE = "lonelog-dashboard";
 
 export class DashboardView extends ItemView {
 	private currentFile: TFile | null = null;
 	private elements: ParsedElements | null = null;
+	private plugin: LonelogPlugin;
 
 	// Debounced refresh to save performance during rapid editing
 	private debouncedRefresh = debounce(() => this.refresh(), 500, true);
 
-	constructor(leaf: WorkspaceLeaf) {
+	constructor(leaf: WorkspaceLeaf, plugin: LonelogPlugin) {
 		super(leaf);
+		this.plugin = plugin;
 	}
 
 	getViewType(): string {
@@ -88,6 +91,12 @@ export class DashboardView extends ItemView {
 		
 		// Progress Section
 		this.renderProgress(rightCol);
+
+		// Dungeon Section
+		this.renderDungeon(rightCol);
+
+		// Resources Section
+		this.renderResources(rightCol);
 		
 		// Entities Section (NPCs, Locations, Threads)
 		this.renderEntities(rightCol);
@@ -106,6 +115,7 @@ export class DashboardView extends ItemView {
 		this.createStatCard(stats, "Scenes", totalScenes.toString());
 		this.createStatCard(stats, "NPCs", (this.elements?.npcs.size || 0).toString());
 		this.createStatCard(stats, "Threads", (this.elements?.threads.size || 0).toString());
+		this.createStatCard(stats, "Rooms", (this.elements?.rooms.size || 0).toString());
 	}
 
 	private createStatCard(container: HTMLElement, label: string, value: string): void {
@@ -176,6 +186,91 @@ export class DashboardView extends ItemView {
 		});
 	}
 
+	private renderDungeon(container: HTMLElement): void {
+		if (!this.plugin.settings.enableDungeonAddon) return;
+		const section = container.createEl("div", { cls: "ll-dashboard-section" });
+		section.createEl("h2", { text: t("views.dungeon-header") });
+
+		if (!this.elements || this.elements.rooms.size === 0) {
+			section.createEl("div", { text: t("views.no-rooms"), cls: "ll-empty-hint" });
+			return;
+		}
+
+		const list = section.createEl("div", { cls: "ll-entity-list" });
+		
+		this.elements.rooms.forEach(room => {
+			const item = list.createEl("div", { cls: "ll-entity-item" });
+			const nameCol = item.createEl("div", { cls: "ll-room-info" });
+			nameCol.createEl("span", { text: `R${room.id}`, cls: "ll-entity-name" });
+			if (room.description) {
+				nameCol.createEl("span", { text: room.description, cls: "ll-room-desc" });
+			}
+			
+			const statusTags = item.createEl("div", { cls: "ll-room-statuses" });
+			room.status.forEach(s => {
+				statusTags.createEl("span", { 
+					text: s, 
+					cls: `ll-room-status ll-status-${s.toLowerCase().replace(/\s+/g, "-")}` 
+				});
+			});
+			
+			if (room.exits.length > 0) {
+				const exitsEl = item.createEl("div", { cls: "ll-room-exits" });
+				exitsEl.createEl("span", { text: "Exits: ", cls: "ll-exits-label" });
+				exitsEl.createEl("span", { text: room.exits.join(", "), cls: "ll-exits-list" });
+			}
+
+			item.addEventListener("click", () => this.jumpToLine(room.lastMention));
+		});
+	}
+
+	private renderResources(container: HTMLElement): void {
+		if (!this.plugin.settings.enableResourceAddon) return;
+		if (!this.elements) return;
+		
+		const hasWealth = this.elements.wealth.size > 0;
+		const hasInv = this.elements.inventory.size > 0;
+		
+		if (!hasWealth && !hasInv) return;
+
+		const section = container.createEl("div", { cls: "ll-dashboard-section" });
+		section.createEl("h2", { text: t("views.resources-header") });
+
+		// Render Wealth
+		if (hasWealth) {
+			const wealthContainer = section.createEl("div", { cls: "ll-wealth-container" });
+			this.elements.wealth.forEach((value, currency) => {
+				const item = wealthContainer.createEl("div", { cls: "ll-wealth-item" });
+				item.createEl("span", { text: currency, cls: "ll-wealth-label" });
+				item.createEl("span", { text: value, cls: "ll-wealth-value" });
+			});
+		}
+
+		// Render Inventory
+		if (hasInv) {
+			const grid = section.createEl("div", { cls: "ll-resource-grid" });
+			this.elements.inventory.forEach(item => {
+				const card = grid.createEl("div", { cls: "ll-resource-card" });
+				
+				const main = card.createEl("div", { cls: "ll-resource-main" });
+				const info = main.createEl("div", { cls: "ll-resource-info" });
+				info.createEl("div", { text: item.name, cls: "ll-resource-name" });
+				
+				if (item.properties.length > 0) {
+					const propsEl = info.createEl("div", { cls: "ll-resource-props" });
+					item.properties.forEach(p => propsEl.createEl("span", { text: p }));
+				}
+				
+				if (item.quantity) {
+					const qtyEl = main.createEl("div", { cls: "ll-resource-qty" });
+					qtyEl.setText(item.quantity);
+				}
+
+				card.addEventListener("click", () => this.jumpToLine(item.lastMention));
+			});
+		}
+	}
+
 	private renderEntities(container: HTMLElement): void {
 		const section = container.createEl("div", { cls: "ll-dashboard-section" });
 		section.createEl("h2", { text: t("views.story-header") });
@@ -209,6 +304,7 @@ export class DashboardView extends ItemView {
 			});
 		}
 	}
+
 
 	private jumpToLine(line: number): void {
 		if (!this.currentFile) return;

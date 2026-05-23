@@ -3,6 +3,7 @@ import { LonelogSettings } from "../settings";
 import { TrackModal } from "./templates";
 import { TableResolver, TableDefinition } from "../utils/table-resolver";
 import { RollManager } from "../utils/roll-manager";
+import { CardRoller } from "../utils/card-roller";
 
 export class NotationCommands {
 	// Single symbol insertions
@@ -64,7 +65,7 @@ export class NotationCommands {
 
 	// Tag snippet insertions
 	static insertNPCTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[N:Name|]";
+		const text = "[N:Name]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 
@@ -78,7 +79,7 @@ export class NotationCommands {
 	}
 
 	static insertLocationTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[L:Name|]";
+		const text = "[L:Name]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 
@@ -204,7 +205,7 @@ export class NotationCommands {
 	}
 
 	static insertPCTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[PC:Name|]";
+		const text = "[PC:Name]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 
@@ -284,6 +285,19 @@ export class NotationCommands {
 		}
 	}
 
+	static drawCardOnLine(editor: Editor, settings: LonelogSettings): void {
+		if (!settings.enableCardAddon) return;
+		
+		const cursor = editor.getCursor();
+		const lineNum = cursor.line;
+		const lineText = editor.getLine(lineNum);
+
+		const newLineText = CardRoller.processLine(lineText, settings.inlineCardDescriptions);
+		if (newLineText && newLineText !== lineText) {
+			editor.setLine(lineNum, newLineText);
+		}
+	}
+
 	static insertCombatBlock(editor: Editor, settings: LonelogSettings): void {
 		const text = "[COMBAT]\n\n[/COMBAT]";
 		const cursor = editor.getCursor();
@@ -300,7 +314,7 @@ export class NotationCommands {
 	}
 
 	static insertFoeTag(editor: Editor, settings: LonelogSettings): void {
-		const text = "[F:Name|]";
+		const text = "[F:Name]";
 		const cursor = editor.getCursor();
 		editor.replaceSelection(text);
 
@@ -310,6 +324,56 @@ export class NotationCommands {
 				{ line: cursor.line, ch: cursor.ch + 7 }
 			);
 		}
+	}
+
+	static insertRoomTag(editor: Editor, settings: LonelogSettings): void {
+		const text = "[R:1|active]";
+		const cursor = editor.getCursor();
+		editor.replaceSelection(text);
+
+		if (settings.smartCursorPositioning) {
+			editor.setSelection(
+				{ line: cursor.line, ch: cursor.ch + 3 },
+				{ line: cursor.line, ch: cursor.ch + 4 }
+			);
+		}
+	}
+
+	static insertDungeonStatus(editor: Editor, settings: LonelogSettings): void {
+		const text = "[DUNGEON STATUS]\n\n[/DUNGEON STATUS]";
+		const cursor = editor.getCursor();
+		editor.replaceSelection(text);
+
+		if (settings.smartCursorPositioning) {
+			editor.setCursor({ line: cursor.line + 1, ch: 0 });
+		}
+	}
+
+	static insertInventoryTag(editor: Editor, settings: LonelogSettings): void {
+		const text = "[Inv:Name|1]";
+		const cursor = editor.getCursor();
+		editor.replaceSelection(text);
+
+		if (settings.smartCursorPositioning) {
+			editor.setCursor({ line: cursor.line, ch: cursor.ch + 5 });
+		}
+	}
+
+	static insertWealthTag(editor: Editor, settings: LonelogSettings): void {
+		const text = "[Wealth:Gold 0]";
+		const cursor = editor.getCursor();
+		editor.replaceSelection(text);
+
+		if (settings.smartCursorPositioning) {
+			editor.setCursor({ line: cursor.line, ch: cursor.ch + 8 });
+		}
+	}
+
+	static insertResourcesBlock(editor: Editor, settings: LonelogSettings): void {
+		const text = "[RESOURCES]\n\n[/RESOURCES]";
+		const cursor = editor.getCursor();
+		editor.replaceSelection(text);
+		editor.setCursor({ line: cursor.line + 1, ch: 0 });
 	}
 
 	/**
