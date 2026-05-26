@@ -509,7 +509,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.setDesc(t("settings.block-font-family-desc"))
 			.addText((text) =>
 				text
-					.setPlaceholder("Consolas, 'Courier New'")
+					.setPlaceholder("Consolas, monospace")
 					.setValue(this.plugin.settings.blockFontFamily)
 					.onChange(async (value) => {
 						this.plugin.settings.blockFontFamily = value;

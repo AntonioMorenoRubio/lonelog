@@ -30,9 +30,9 @@ export class ResourceStatusView extends ItemView {
 	}
 
 	async onOpen(): Promise<void> {
-		this.registerEvent(this.app.workspace.on("active-leaf-change", () => this.refresh()));
+		this.registerEvent(this.app.workspace.on("active-leaf-change", () => void this.refresh()));
 		this.registerEvent(this.app.vault.on("modify", (file) => {
-			if (file === this.currentFile) this.refresh();
+			if (file === this.currentFile) void this.refresh();
 		}));
 		
 		await this.refresh();
@@ -85,7 +85,7 @@ export class ResourceStatusView extends ItemView {
 			const main = card.createEl("div", { cls: "ll-resource-main" });
 			const info = main.createEl("div", { cls: "ll-resource-info" });
 			const nameBtn = info.createEl("div", { text: item.name, cls: "ll-resource-name" });
-			nameBtn.style.cursor = "pointer";
+			nameBtn.addClass("is-clickable");
 			nameBtn.addEventListener("click", () => this.jumpToLine(item.lastMention));
 
 			if (item.properties.length > 0) {

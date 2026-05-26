@@ -639,7 +639,8 @@ export class NotationParser {
 		return encounters;
 	}
 
-	private static parseEntity(match: any, content: string, entity: Map<string, ParsedEntity>){
+	private static parseEntity(match: RegExpExecArray, content: string, entity: Map<string, ParsedEntity>){
+		if (!match[1]) return;
 		const name = match[1].trim();
 		const tagsStr = match[3] || "";
 		const tags = tagsStr

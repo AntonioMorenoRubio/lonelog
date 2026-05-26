@@ -30,9 +30,9 @@ export class DungeonStatusView extends ItemView {
 	}
 
 	async onOpen(): Promise<void> {
-		this.registerEvent(this.app.workspace.on("active-leaf-change", () => this.refresh()));
+		this.registerEvent(this.app.workspace.on("active-leaf-change", () => void this.refresh()));
 		this.registerEvent(this.app.vault.on("modify", (file) => {
-			if (file === this.currentFile) this.refresh();
+			if (file === this.currentFile) void this.refresh();
 		}));
 		
 		await this.refresh();

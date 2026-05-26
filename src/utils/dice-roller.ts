@@ -45,7 +45,7 @@ export class DiceRoller {
 
 		// Use a unified regex to find dice pools (e.g., 2d6, 4df) or static modifiers (e.g., +5, -2)
 		const tokenRegex = /([+-]?)(?:(\d*)d(\d+|f)|(\d+))/gi;
-		
+
 		const rolls: number[] = [];
 		let total = 0;
 		let totalModifier = 0;
@@ -60,13 +60,13 @@ export class DiceRoller {
 		while ((match = tokenRegex.exec(expressionPart)) !== null) {
 			foundAny = true;
 			const sign = match[1] === "-" ? -1 : 1;
-			
+
 			if (match[3]) {
 				const count = match[2] ? parseInt(match[2]) : 1;
 				const sidesRaw = match[3];
 				const isFate = sidesRaw.toLowerCase() === "f";
 				const sides = isFate ? "f" : parseInt(sidesRaw);
-				
+
 				if (rolls.length === 0) firstSides = sides;
 
 				for (let i = 0; i < count; i++) {
@@ -130,7 +130,7 @@ export class DiceRoller {
 		// First, try the standard prefixes (anchored to start of line or with space prefix)
 		const dMatch = /^\s*(?:d:|\?|tbl:|gen:)\s*([^->\n]+)/i.exec(line);
 		let basePart: string | null = null;
-		
+
 		if (dMatch && dMatch[1]) {
 			basePart = dMatch[1].trim();
 		} else {
@@ -183,7 +183,7 @@ export class DiceRoller {
 		// 1. Identify the prefix (d:, ?, etc.) OR a Label:
 		const dMatch = /^\s*(d:|\?|tbl:|gen:)\s*/i.exec(line);
 		let prefix = dMatch ? dMatch[0] : "";
-		
+
 		// If no standard prefix, check if it's a Label: format
 		if (!prefix) {
 			const labelMatch = /^(\s*[^:([]+:\s*)/i.exec(line);
@@ -203,15 +203,14 @@ export class DiceRoller {
 			// Extract pure notation from this segment
 			const eqIndex = seg.indexOf("=");
 			const notation = eqIndex !== -1 ? seg.substring(0, eqIndex).trim() : seg.trim();
-			
+
 			// If we only have one segment and a result was provided, use it directly
 			// to avoid re-rolling (preserves the exact rolls and supports advanced rollers)
 			let rollResult: RollResult | null = null;
 			if (segments.length === 1 && result) {
 				rollResult = result;
 			} else {
-				const rollFunc = options.roller || DiceRoller.roll;
-				rollResult = rollFunc(notation);
+				rollResult = options.roller ? options.roller(notation) : DiceRoller.roll(notation);
 			}
 
 			if (!rollResult) return seg;
@@ -222,14 +221,14 @@ export class DiceRoller {
 			let resultSuffix: string;
 			if (detailMode && rollResult.rolls.length > 0) {
 				let suffix: string;
-				
+
 				if (isFate) {
 					// Fate display: symbols (+, -, 0)
 					suffix = rollResult.rolls.map(r => r === 1 ? "+" : r === -1 ? "-" : "0").join(",");
 				} else {
 					const sorted = [...rollResult.rolls].sort((a, b) => b - a);
 					suffix = sorted.join(",");
-					
+
 					// Add annotations (High/Low) - only for non-Fate dice
 					const annotations: string[] = [];
 					if (showHigh && highLabel !== "") annotations.push(`${highLabel}=${sorted[0]}`);
@@ -245,13 +244,13 @@ export class DiceRoller {
 
 				// Final calculation display
 				const totalStr = (isFate && rollResult.total >= 0) ? `+${rollResult.total}` : String(rollResult.total);
-				
+
 				if (rollResult.modifier !== 0 || rollResult.rolls.length > 1 || rollResult.comparison) {
 					const modLabel = rollResult.modifier >= 0 ? `+${rollResult.modifier}` : `${rollResult.modifier}`;
 					const modPart = rollResult.modifier !== 0 ? ` (${modLabel})` : "";
-					
+
 					let calculation = `${suffix}${modPart} = ${totalStr}`;
-					
+
 					if (rollResult.comparison) {
 						const flag = rollResult.comparison.success ? "S" : "F";
 						calculation += ` ${flag}`;
@@ -268,7 +267,7 @@ export class DiceRoller {
 				// Standard view: just the total and optional flag
 				const totalStr = (isFate && rollResult.total >= 0) ? `+${rollResult.total}` : String(rollResult.total);
 				resultSuffix = totalStr;
-				
+
 				if (rollResult.comparison) {
 					resultSuffix += ` ${rollResult.comparison.success ? "S" : "F"}`;
 				} else if (rollResult.forceFlag) {
@@ -280,7 +279,7 @@ export class DiceRoller {
 		});
 
 		let finalLine = `${prefix}${formattedSegments.join(", ")}`;
-		
+
 		// If we have a table outcome, add it (replacing any original outcome since we stripped it above)
 		if (tableOutcome) {
 			finalLine += ` -> ${tableOutcome}`;

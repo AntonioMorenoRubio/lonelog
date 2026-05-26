@@ -3,7 +3,7 @@
  * A unified, premium interface for managing all campaign elements in one place.
  */
 
-import { ItemView, TFile, WorkspaceLeaf, debounce, setIcon } from "obsidian";
+import { ItemView, TFile, WorkspaceLeaf, debounce } from "obsidian";
 import { NotationParser, ParsedElements } from "../utils/parser";
 import { t } from "../i18n/i18n";
 import LonelogPlugin from "../main";
