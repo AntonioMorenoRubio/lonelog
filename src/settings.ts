@@ -318,10 +318,8 @@ export class LonelogSettingTab extends PluginSettingTab {
 
 	private renderPanel(containerEl: HTMLElement): void {
 		containerEl.empty();
-		containerEl.createEl("h2", {
-			cls: "lonelog-settings-panel-title",
-			text: this.getSectionTitle(this.activeSection),
-		});
+		const titleSetting = new Setting(containerEl).setName(this.getSectionTitle(this.activeSection)).setHeading();
+		titleSetting.settingEl.addClass("lonelog-settings-panel-heading");
 
 		switch (this.activeSection) {
 			case "interface":
@@ -363,7 +361,8 @@ export class LonelogSettingTab extends PluginSettingTab {
 
 	private renderSubsection(containerEl: HTMLElement, title: string): HTMLElement {
 		const sectionEl = containerEl.createDiv({ cls: "lonelog-settings-subsection" });
-		sectionEl.createEl("h3", { cls: "lonelog-settings-subsection-title", text: title });
+		const headingSetting = new Setting(sectionEl).setName(title).setHeading();
+		headingSetting.settingEl.addClass("lonelog-settings-subsection-heading");
 		return sectionEl;
 	}
 
