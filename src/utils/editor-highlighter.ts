@@ -328,6 +328,10 @@ export const lonelogEditorPlugin = (settings: LonelogSettings) => ViewPlugin.fro
 		}
 
 		update(update: ViewUpdate) {
+			// IME composition can emit many intermediate document updates.
+			// Skip expensive decoration rebuilds until composition settles.
+			if (update.view.composing) return;
+
 			if (update.docChanged || update.viewportChanged) {
 				this.decorations = buildDecorations(update.view, settings);
 			}

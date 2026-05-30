@@ -26,6 +26,7 @@ interface TagSuggestion {
 export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 	private parsedElements: ParsedElements | null = null;
 	private lastContent: string = "";
+	private activeSessionKey: string | null = null;
 
 	constructor(app: App) {
 		super(app);
@@ -49,6 +50,16 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 		if (tagMatch) {
 			const query = tagMatch[3] || "";
 			const start = cursor.ch - query.length;
+			const sessionKey = `${file.path}:${cursor.line}:${start}:${tagMatch[2]?.toUpperCase() || ""}`;
+
+			// Parse once when entering a new autocomplete session and reuse the result
+			// while the user keeps typing inside the same tag context.
+			if (sessionKey !== this.activeSessionKey) {
+				const content = editor.getValue();
+				this.parsedElements = NotationParser.parse(content);
+				this.lastContent = content;
+				this.activeSessionKey = sessionKey;
+			}
 
 			return {
 				start: { line: cursor.line, ch: start },
@@ -56,6 +67,8 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 				query,
 			};
 		}
+
+		this.activeSessionKey = null;
 
 		return null;
 	}
@@ -67,9 +80,17 @@ export class LonelogAutoComplete extends EditorSuggest<TagSuggestion> {
 	getSuggestions(
 		context: EditorSuggestContext
 	): TagSuggestion[] | Promise<TagSuggestion[]> {
-		// Parse document if needed
-		const content = context.editor.getValue();
-		if (content !== this.lastContent) {
+		// Avoid reparsing the full document during IME composition.
+		// Composition generates many transient states that are not useful for suggestions.
+		if ((this.context as { editor?: Editor & { cm?: { composing?: boolean } } } | null)?.editor?.cm?.composing) {
+			return [];
+		}
+
+		// Parse document if needed. In the common case, onTrigger already parsed
+		// once for the active autocomplete session, so query updates don't keep
+		// reparsing the full document.
+		if (!this.parsedElements) {
+			const content = context.editor.getValue();
 			this.parsedElements = NotationParser.parse(content);
 			this.lastContent = content;
 		}

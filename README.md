@@ -1,6 +1,6 @@
 # Lonelog for Obsidian  - Solo TTRPG Journaling
 [![Obsidian](https://img.shields.io/badge/Obsidian-Plugin-7C3AED?logo=obsidian)](https://obsidian.md/plugins)
-[![version](https://img.shields.io/badge/version-1.4.8-blue.svg)](https://github.com/snifer/lonelog/releases)
+[![version](https://img.shields.io/badge/version-1.5.1-blue.svg)](https://github.com/snifer/lonelog/releases)
 [![license](https://img.shields.io/badge/license-0--BSD-green.svg)](LICENSE)
 ![GitHub Downloads](https://img.shields.io/github/downloads/Snifer/lonelog/total?logo)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee-ff5f5f?logo=ko-fi&logoColor=white)](https://ko-fi.com/bastiondeldino)
@@ -23,7 +23,7 @@ Inserción rápida de los símbolos base de Lonelog mediante la paleta de comand
 - `d:` Dice Roll / Tirada de Dados
 - `->` Result / Resultado
 - `=>` Consequence / Consecuencia
-- `[Tag:Name|Attributes]` Entity Tags (NPCs, Locations, PCs, etc.) / Etiquetas de Entidad.
+- `[`Tag:Name|Attributes`]` Entity Tags (NPCs, Locations, PCs, etc.) / Etiquetas de Entidad.
 ```
 
 ### 2. Gestión de Campaña y Sesiones
@@ -179,6 +179,40 @@ npm run dev
 npm run build
 ```
 
+### Public API / API pública
+
+Lonelog exposes an initial public API for interoperability with other Obsidian plugins through the plugin instance.
+
+Example:
+
+```ts
+const lonelogPlugin = app.plugins.plugins["lonelog"] as
+  | { api?: import("./src/api").LonelogApi }
+  | undefined;
+
+const api = lonelogPlugin?.api;
+if (!api || api.apiVersion !== "1") return;
+
+const parsed = api.parse.content("[N:Jonah|friendly]");
+const tokens = api.tokenize.line("=> [N:Jonah|friendly]");
+
+await api.views.openDashboard();
+```
+
+Current V1 scope:
+
+- `parse.content`
+- `parse.file`
+- `parse.isLonelogNote`
+- `tokenize.line`
+- `tokenize.lines`
+- `settings.get`
+- `views.open...`
+
+Full design reference:
+
+- `lonelog-api-design.md`
+
 ---
 
 ## 📄 License / Licencia
@@ -209,4 +243,3 @@ If this project adds value to your gaming table, you can support the developer w
 - **Current Development / Desarrollado actual:** [Snifer](https://www.youtube.com/@BastiondelDinosaurio) [Bastion del Dinosaurio](https://www.youtube.com/@BastiondelDinosaurio)
 - **Lonelog System / Sistema Lonelog**: [Roberto Bisceglie](https://zeruhur.itch.io/lonelog)
 - **Design Philosophy / Filosofía de Diseño**: Inspired by the Valley Standard and modern Solo TTRPG practices. / Inspirado en el Valley Standard y prácticas modernas de Solo TTRPG.
-

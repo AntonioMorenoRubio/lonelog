@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.5.1]
+
+### Performance Fix: IME and CJK Input Lag
+
+Improved editor responsiveness when typing with IME-based keyboards such as Chinese, Japanese, and Korean input methods.
+
+### What Changed
+
+- Skipped expensive editor highlighting rebuilds while CodeMirror is in text composition mode.
+- Prevented autocomplete from reparsing the full document during IME composition.
+- Optimized autocomplete so a full Lonelog parse happens once per autocomplete session instead of on every query update while typing inside the same tag context.
+
+### Result
+
+- Reduced typing lag with IME composition.
+- Lowered unnecessary parsing work in large notes.
+- Improved responsiveness when editing Lonelog tags such as `[N:...]`, `[PC:...]`, `[Thread:...]`, and similar entities.
+
+---
+
 ## [1.5.0]
 
 ### Syntax Highlighting Fix: Multi-line Entity Tags
