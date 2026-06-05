@@ -12,6 +12,7 @@ export class DiceAnimator {
 	async showRoll(total: number, sides: number = 6): Promise<void> {
 		this.createOverlay();
 		if (!this.overlay) return;
+		const ownerWindow = this.overlay.ownerDocument.defaultView ?? window;
 
 		const scene = this.overlay.createEl("div", { cls: "lonelog-dice-scene" });
 		const cube = scene.createEl("div", { cls: "lonelog-cube rolling" });
@@ -25,7 +26,7 @@ export class DiceAnimator {
 		}
 
 		// Wait for initial "tumble" animation
-		await new Promise(r => setTimeout(r, 1000));
+		await new Promise((r) => ownerWindow.setTimeout(r, 1000));
 
 		// Set final face for d6 or just show result for others
 		cube.classList.remove("rolling");
@@ -41,13 +42,13 @@ export class DiceAnimator {
 		}
 
 		// Wait and cleanup
-		await new Promise(r => setTimeout(r, 1500));
+		await new Promise((r) => ownerWindow.setTimeout(r, 1500));
 		this.removeOverlay();
 	}
 
 	private createOverlay(): void {
 		if (this.overlay) return;
-		this.overlay = document.body.createEl("div", { cls: "lonelog-dice-overlay" });
+		this.overlay = window.activeDocument.body.createEl("div", { cls: "lonelog-dice-overlay" });
 		this.overlay.classList.add("lonelog-hidden");
 		// Force reflow
 		void this.overlay.offsetHeight;
@@ -57,7 +58,8 @@ export class DiceAnimator {
 	private removeOverlay(): void {
 		if (!this.overlay) return;
 		this.overlay.classList.add("lonelog-hidden");
-		setTimeout(() => {
+		const ownerWindow = this.overlay.ownerDocument.defaultView ?? window;
+		ownerWindow.setTimeout(() => {
 			if (this.overlay) {
 				this.overlay.remove();
 				this.overlay = null;

@@ -59,7 +59,7 @@ class DiceWidget extends WidgetType {
 	}
 
 	toDOM(view: EditorView): HTMLElement {
-		const span = document.createElement("span");
+		const span = view.dom.ownerDocument.createElement("span");
 		span.innerText = "🎲";
 		span.className = "lonelog-dice-widget";
 		span.title = `Roll ${this.notation} (inserts result)`;
@@ -145,7 +145,7 @@ class CardWidget extends WidgetType {
 	}
 
 	toDOM(view: EditorView): HTMLElement {
-		const span = document.createElement("span");
+		const span = view.dom.ownerDocument.createElement("span");
 		span.innerText = "🎴";
 		span.className = "lonelog-card-widget lonelog-dice-widget";
 		span.title = `Draw ${this.notation}`;

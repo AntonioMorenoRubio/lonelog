@@ -149,15 +149,15 @@ export default class LonelogPlugin extends Plugin {
 
 	onunload() {
 		removeHighlightColors();
-		document.body.classList.remove("ll-reduced-boldness");
+		window.activeDocument.body.classList.remove("ll-reduced-boldness");
 		console.debug("Unloading Lonelog plugin");
 	}
 
 	applyFontWeightSetting() {
 		if (this.settings.tokenFontWeight === "normal") {
-			document.body.classList.add("ll-reduced-boldness");
+			window.activeDocument.body.classList.add("ll-reduced-boldness");
 		} else {
-			document.body.classList.remove("ll-reduced-boldness");
+			window.activeDocument.body.classList.remove("ll-reduced-boldness");
 		}
 	}
 

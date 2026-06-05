@@ -31,7 +31,7 @@ function renderLine(
 	// Render each token as a span (or text node if plain text)
 	for (const token of tokens) {
 		if (token.type === "text") {
-			lineEl.appendChild(document.createTextNode(token.text));
+			lineEl.appendChild(container.ownerDocument.createTextNode(token.text));
 		} else {
 			lineEl.createEl("span", {
 				cls: getTokenClass(token.type, "ll"),

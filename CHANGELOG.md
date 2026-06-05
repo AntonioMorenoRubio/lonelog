@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.5.2]
+
+### Compatibility Update: Obsidian API and Popout Windows
+
+Updated the plugin metadata and UI code to match the Obsidian APIs already used by Lonelog, and improved compatibility with popout windows.
+
+### What Changed
+
+- Raised `minAppVersion` to `1.1.1` to match the current use of modern Obsidian APIs such as `processFrontMatter`, `workspace.activeEditor`, and newer workspace helpers.
+- Replaced direct `document` access with `activeDocument` or element-owned documents where needed, so overlays, settings rendering, and syntax highlighting behave correctly in popout windows.
+- Replaced global `setTimeout()` calls with window-scoped timers for popout window safety.
+- Removed internal direct calls to `display()` inside the settings tab implementation while keeping the `display()` override for backward compatibility with older Obsidian versions.
+
+---
+
 ## [1.5.1]
 
 ### Performance Fix: IME and CJK Input Lag

@@ -140,66 +140,68 @@ export const DEFAULT_SETTINGS: LonelogSettings = {
 
 /** Sets Lonelog CSS custom properties on document.body */
 export function applyHighlightColors(settings: LonelogSettings): void {
-	document.body.style.setProperty("--ll-action-color", settings.colorAction);
-	document.body.style.setProperty("--ll-question-color", settings.colorQuestion);
-	document.body.style.setProperty("--ll-dice-color", settings.colorDice);
-	document.body.style.setProperty("--ll-consequence-color", settings.colorConsequence);
-	document.body.style.setProperty("--ll-result-color", settings.colorResult);
-	document.body.style.setProperty("--ll-tag-color", settings.colorTag);
-	document.body.style.setProperty("--ll-meta-color", settings.colorMeta);
-	document.body.style.setProperty("--ll-dialogue-color", settings.colorDialogue);
-	document.body.style.setProperty("--ll-narrative-color", settings.colorNarrative);
-	document.body.style.setProperty("--ll-table-color", settings.colorTable);
-	document.body.style.setProperty("--ll-generator-color", settings.colorGenerator);
-	document.body.style.setProperty("--ll-scene-color", settings.colorScene);
-	document.body.style.setProperty("--ll-header-color", settings.colorHeader);
-	document.body.style.setProperty("--ll-round-color", settings.colorRound);
-	document.body.style.setProperty("--ll-combat-color", settings.colorCombatBlock);
-	document.body.style.setProperty("--ll-foe-color", settings.colorFoe);
-	document.body.style.setProperty("--ll-room-color", settings.colorRoom);
-	document.body.style.setProperty("--ll-dungeon-block-color", settings.colorDungeonBlock);
-	document.body.style.setProperty("--ll-inventory-color", settings.colorInventory);
-	document.body.style.setProperty("--ll-wealth-color", settings.colorWealth);
-	document.body.style.setProperty("--ll-resources-block-color", settings.colorResourcesBlock);
+	const body = window.activeDocument.body;
+	body.style.setProperty("--ll-action-color", settings.colorAction);
+	body.style.setProperty("--ll-question-color", settings.colorQuestion);
+	body.style.setProperty("--ll-dice-color", settings.colorDice);
+	body.style.setProperty("--ll-consequence-color", settings.colorConsequence);
+	body.style.setProperty("--ll-result-color", settings.colorResult);
+	body.style.setProperty("--ll-tag-color", settings.colorTag);
+	body.style.setProperty("--ll-meta-color", settings.colorMeta);
+	body.style.setProperty("--ll-dialogue-color", settings.colorDialogue);
+	body.style.setProperty("--ll-narrative-color", settings.colorNarrative);
+	body.style.setProperty("--ll-table-color", settings.colorTable);
+	body.style.setProperty("--ll-generator-color", settings.colorGenerator);
+	body.style.setProperty("--ll-scene-color", settings.colorScene);
+	body.style.setProperty("--ll-header-color", settings.colorHeader);
+	body.style.setProperty("--ll-round-color", settings.colorRound);
+	body.style.setProperty("--ll-combat-color", settings.colorCombatBlock);
+	body.style.setProperty("--ll-foe-color", settings.colorFoe);
+	body.style.setProperty("--ll-room-color", settings.colorRoom);
+	body.style.setProperty("--ll-dungeon-block-color", settings.colorDungeonBlock);
+	body.style.setProperty("--ll-inventory-color", settings.colorInventory);
+	body.style.setProperty("--ll-wealth-color", settings.colorWealth);
+	body.style.setProperty("--ll-resources-block-color", settings.colorResourcesBlock);
 
 	if (settings.blockFontFamily) {
-		document.body.style.setProperty("--ll-font-family", settings.blockFontFamily);
+		body.style.setProperty("--ll-font-family", settings.blockFontFamily);
 	} else {
-		document.body.style.removeProperty("--ll-font-family");
+		body.style.removeProperty("--ll-font-family");
 	}
 
 	if (settings.blockFontSize) {
-		document.body.style.setProperty("--ll-font-size", settings.blockFontSize);
+		body.style.setProperty("--ll-font-size", settings.blockFontSize);
 	} else {
-		document.body.style.removeProperty("--ll-font-size");
+		body.style.removeProperty("--ll-font-size");
 	}
 }
 
 /** Removes the injected CSS custom properties (call from onunload). */
 export function removeHighlightColors(): void {
-	document.body.style.removeProperty("--ll-action-color");
-	document.body.style.removeProperty("--ll-question-color");
-	document.body.style.removeProperty("--ll-dice-color");
-	document.body.style.removeProperty("--ll-consequence-color");
-	document.body.style.removeProperty("--ll-result-color");
-	document.body.style.removeProperty("--ll-tag-color");
-	document.body.style.removeProperty("--ll-meta-color");
-	document.body.style.removeProperty("--ll-dialogue-color");
-	document.body.style.removeProperty("--ll-narrative-color");
-	document.body.style.removeProperty("--ll-table-color");
-	document.body.style.removeProperty("--ll-generator-color");
-	document.body.style.removeProperty("--ll-scene-color");
-	document.body.style.removeProperty("--ll-header-color");
-	document.body.style.removeProperty("--ll-round-color");
-	document.body.style.removeProperty("--ll-combat-color");
-	document.body.style.removeProperty("--ll-foe-color");
-	document.body.style.removeProperty("--ll-room-color");
-	document.body.style.removeProperty("--ll-dungeon-block-color");
-	document.body.style.removeProperty("--ll-inventory-color");
-	document.body.style.removeProperty("--ll-wealth-color");
-	document.body.style.removeProperty("--ll-resources-block-color");
-	document.body.style.removeProperty("--ll-font-family");
-	document.body.style.removeProperty("--ll-font-size");
+	const body = window.activeDocument.body;
+	body.style.removeProperty("--ll-action-color");
+	body.style.removeProperty("--ll-question-color");
+	body.style.removeProperty("--ll-dice-color");
+	body.style.removeProperty("--ll-consequence-color");
+	body.style.removeProperty("--ll-result-color");
+	body.style.removeProperty("--ll-tag-color");
+	body.style.removeProperty("--ll-meta-color");
+	body.style.removeProperty("--ll-dialogue-color");
+	body.style.removeProperty("--ll-narrative-color");
+	body.style.removeProperty("--ll-table-color");
+	body.style.removeProperty("--ll-generator-color");
+	body.style.removeProperty("--ll-scene-color");
+	body.style.removeProperty("--ll-header-color");
+	body.style.removeProperty("--ll-round-color");
+	body.style.removeProperty("--ll-combat-color");
+	body.style.removeProperty("--ll-foe-color");
+	body.style.removeProperty("--ll-room-color");
+	body.style.removeProperty("--ll-dungeon-block-color");
+	body.style.removeProperty("--ll-inventory-color");
+	body.style.removeProperty("--ll-wealth-color");
+	body.style.removeProperty("--ll-resources-block-color");
+	body.style.removeProperty("--ll-font-family");
+	body.style.removeProperty("--ll-font-size");
 }
 
 // ---------------------------------------------------------------------------
@@ -273,6 +275,10 @@ export class LonelogSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
+		this.render();
+	}
+
+	private render(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 		containerEl.addClass("lonelog-settings-tab");
@@ -308,13 +314,13 @@ export class LonelogSettingTab extends PluginSettingTab {
 				text: section.label,
 			});
 
-			button.addEventListener("click", () => {
-				if (this.activeSection === section.key) return;
-				this.activeSection = section.key;
-				this.display();
-			});
+				button.addEventListener("click", () => {
+					if (this.activeSection === section.key) return;
+					this.activeSection = section.key;
+					this.render();
+				});
+			}
 		}
-	}
 
 	private renderPanel(containerEl: HTMLElement): void {
 		containerEl.empty();
@@ -384,13 +390,13 @@ export class LonelogSettingTab extends PluginSettingTab {
 					.addOption("en", "English")
 					.addOption("es", "Español")
 					.setValue(this.plugin.settings.locale)
-					.onChange(async (value) => {
-						this.plugin.settings.locale = value;
-						setLocale(value);
-						await this.plugin.saveSettings();
-						this.display();
-					})
-			);
+						.onChange(async (value) => {
+							this.plugin.settings.locale = value;
+							setLocale(value);
+							await this.plugin.saveSettings();
+							this.render();
+						})
+				);
 
 		new Setting(languageSection)
 			.setName(t("settings.default-view"))
@@ -757,12 +763,12 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.enableCombatAddon)
-					.onChange(async (value) => {
-						this.plugin.settings.enableCombatAddon = value;
-						await this.plugin.saveSettings();
-						this.display();
-					})
-			);
+						.onChange(async (value) => {
+							this.plugin.settings.enableCombatAddon = value;
+							await this.plugin.saveSettings();
+							this.render();
+						})
+				);
 		this.addAddonBadge(combatSetting, this.plugin.settings.enableCombatAddon);
 
 		const dungeonSetting = new Setting(combatSection)
@@ -771,12 +777,12 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.enableDungeonAddon)
-					.onChange(async (value) => {
-						this.plugin.settings.enableDungeonAddon = value;
-						await this.plugin.saveSettings();
-						this.display();
-					})
-			);
+						.onChange(async (value) => {
+							this.plugin.settings.enableDungeonAddon = value;
+							await this.plugin.saveSettings();
+							this.render();
+						})
+				);
 		this.addAddonBadge(dungeonSetting, this.plugin.settings.enableDungeonAddon);
 
 		const resourceSection = this.renderSubsection(containerEl, t("settings.subsection-resources-inventory"));
@@ -786,12 +792,12 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.enableResourceAddon)
-					.onChange(async (value) => {
-						this.plugin.settings.enableResourceAddon = value;
-						await this.plugin.saveSettings();
-						this.display();
-					})
-			);
+						.onChange(async (value) => {
+							this.plugin.settings.enableResourceAddon = value;
+							await this.plugin.saveSettings();
+							this.render();
+						})
+				);
 		this.addAddonBadge(resourcesSetting, this.plugin.settings.enableResourceAddon);
 
 		const cardsSection = this.renderSubsection(containerEl, t("settings.subsection-cards-advanced-dice"));
@@ -801,12 +807,12 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.enableCardAddon)
-					.onChange(async (value) => {
-						this.plugin.settings.enableCardAddon = value;
-						await this.plugin.saveSettings();
-						this.display();
-					})
-			);
+						.onChange(async (value) => {
+							this.plugin.settings.enableCardAddon = value;
+							await this.plugin.saveSettings();
+							this.render();
+						})
+				);
 		this.addAddonBadge(cardSetting, this.plugin.settings.enableCardAddon);
 
 		const diceNotationSetting = new Setting(cardsSection)
@@ -815,12 +821,12 @@ export class LonelogSettingTab extends PluginSettingTab {
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.enableDiceNotationAddon)
-					.onChange(async (value) => {
-						this.plugin.settings.enableDiceNotationAddon = value;
-						await this.plugin.saveSettings();
-						this.display();
-					})
-			);
+						.onChange(async (value) => {
+							this.plugin.settings.enableDiceNotationAddon = value;
+							await this.plugin.saveSettings();
+							this.render();
+						})
+				);
 		this.addAddonBadge(diceNotationSetting, this.plugin.settings.enableDiceNotationAddon);
 	}
 
@@ -920,7 +926,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 					applyHighlightColors(this.plugin.settings);
 					// Re-render the tab so the inputs reflect the reset value
-					this.display();
+					this.render();
 				});
 		});
 	}
@@ -936,7 +942,7 @@ export class LonelogSettingTab extends PluginSettingTab {
 		}
 
 		// Try to use the browser to parse color names/other formats
-		const canvas = document.createElement("canvas");
+		const canvas = this.containerEl.ownerDocument.createElement("canvas");
 		canvas.width = canvas.height = 1;
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return "#000000";
