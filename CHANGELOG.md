@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.5.3]
+
+### Compatibility Update: Obsidian API and Popout Windows
+
+Repeated the compatibility adjustments from `1.5.2` as part of the latest release cycle, reflecting the changes that were made to metadata and UI behavior.
+
+### What Changed
+
+- Kept `minAppVersion` aligned with the current compatibility baseline used by the plugin.
+- Preserved the Obsidian API compatibility adjustments around modern workspace and frontmatter helpers.
+- Kept the popout window compatibility fixes based on `activeDocument`, element-owned documents, and window-scoped timers.
+- Retained the settings tab rendering cleanup that avoids internal direct calls to `display()`.
+- Registered this release as a follow-up compatibility update in the changelog.
+- Documented the compatibility changes again under `1.5.3`.
+- Kept the release history aligned with the latest metadata and implementation changes.
+
+---
+
 ## [1.5.2]
 
 ### Compatibility Update: Obsidian API and Popout Windows
@@ -8,7 +26,7 @@ Updated the plugin metadata and UI code to match the Obsidian APIs already used 
 
 ### What Changed
 
-- Raised `minAppVersion` to `1.2.0` to match the current compatibility baseline for the Obsidian APIs used by the plugin, including `processFrontMatter`, `workspace.activeEditor`, and newer workspace helpers.
+- Raised `minAppVersion` to `1.13.0` to match the current compatibility baseline for the Obsidian APIs used by the plugin, including `processFrontMatter`, `workspace.activeEditor`, and newer workspace helpers.
 - Replaced direct `document` access with `activeDocument` or element-owned documents where needed, so overlays, settings rendering, and syntax highlighting behave correctly in popout windows.
 - Replaced global `setTimeout()` calls with window-scoped timers for popout window safety.
 - Removed internal direct calls to `display()` inside the settings tab implementation while keeping the `display()` override for backward compatibility with older Obsidian versions.
