@@ -8,7 +8,7 @@ Updated the plugin metadata and UI code to match the Obsidian APIs already used 
 
 ### What Changed
 
-- Raised `minAppVersion` to `1.1.1` to match the current use of modern Obsidian APIs such as `processFrontMatter`, `workspace.activeEditor`, and newer workspace helpers.
+- Raised `minAppVersion` to `1.2.0` to match the current compatibility baseline for the Obsidian APIs used by the plugin, including `processFrontMatter`, `workspace.activeEditor`, and newer workspace helpers.
 - Replaced direct `document` access with `activeDocument` or element-owned documents where needed, so overlays, settings rendering, and syntax highlighting behave correctly in popout windows.
 - Replaced global `setTimeout()` calls with window-scoped timers for popout window safety.
 - Removed internal direct calls to `display()` inside the settings tab implementation while keeping the `display()` override for backward compatibility with older Obsidian versions.
