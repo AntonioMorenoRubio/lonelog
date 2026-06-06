@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.5]
+
+Support Obsidian version 1.12.7
+
 ## [1.5.4]
 
 ### Entity Merge Fix: Lonelog Threads PC State
