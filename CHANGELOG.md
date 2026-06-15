@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.5.6]
+
+### Resource Tracking Fixes: Decimal Wealth and Slot-Based Inventory
+
+Fixed two resource-tracking issues in the parser: decimal wealth deltas were truncating fractional values, and slot/container-based inventory entries could not be consumed through shorthand updates like `[Inv:Torch-1]`.
+
+### What Changed
+
+- Fixed `[Wealth:...]` delta parsing so decimal balances are preserved when applying signed updates such as `[Wealth:Bank -1]`.
+- Reworked decimal arithmetic to stay compatible with the current ES6 TypeScript target without relying on `BigInt`.
+- Extended `[Inv:...]` parsing so shorthand consumption can resolve item quantities nested inside slot/container entries such as `[Inv:Backpack 1|Torch×6]`.
+- Added multi-slot consumption support using a deterministic first-mentioned-first-consumed strategy when the same item exists in more than one slot.
+- Updated nested slot quantities to re-render correctly after consumption, including converting exhausted slots to `empty`.
+- Aligned release metadata and documentation badges to version `1.5.6`.
+- Closes #34.
+- Closes #35.
+
+---
+
 ## [1.5.5]
 
 Support Obsidian version 1.12.7

@@ -404,6 +404,11 @@ export class NotationParser {
 
 			const lineNum = this.getLineNumber(content, match.index);
 
+			if (quantity.match(/^[+-]\d+$/)) {
+				const handled = this.applyInventoryDelta(inventory, name, parseInt(quantity), lineNum);
+				if (handled) continue;
+			}
+
 			if (inventory.has(name)) {
 				const existing = inventory.get(name)!;
 				existing.mentions.push(lineNum);
@@ -443,6 +448,89 @@ export class NotationParser {
 		return inventory;
 	}
 
+	private static applyInventoryDelta(
+		inventory: Map<string, ParsedItem>,
+		targetName: string,
+		delta: number,
+		lineNum: number
+	): boolean {
+		const candidates: Array<{
+			item: ParsedItem;
+			amount: number;
+			type: "direct" | "nested";
+			nestedName?: string;
+			multiplier?: string;
+		}> = [];
+
+		inventory.forEach(item => {
+			if (item.name === targetName && item.quantity.match(/^\d+$/)) {
+				candidates.push({ item, amount: parseInt(item.quantity), type: "direct" });
+				return;
+			}
+
+			const nested = this.parseNestedInventoryQuantity(item.quantity);
+			if (nested && nested.name === targetName) {
+				candidates.push({
+					item,
+					amount: nested.amount,
+					type: "nested",
+					nestedName: nested.name,
+					multiplier: nested.multiplier,
+				});
+			}
+		});
+
+		if (candidates.length === 0) return false;
+
+		candidates.sort((a, b) => a.item.firstMention - b.item.firstMention);
+
+		if (delta > 0) {
+			const directCandidate = candidates.find(candidate => candidate.type === "direct");
+			if (!directCandidate) return false;
+
+			directCandidate.item.quantity = (directCandidate.amount + delta).toString();
+			directCandidate.item.mentions.push(lineNum);
+			directCandidate.item.lastMention = lineNum;
+			return true;
+		}
+
+		let remaining = Math.abs(delta);
+
+		for (const candidate of candidates) {
+			if (remaining <= 0) break;
+
+			const consumed = Math.min(candidate.amount, remaining);
+			const nextAmount = candidate.amount - consumed;
+
+			if (candidate.type === "direct") {
+				candidate.item.quantity = nextAmount.toString();
+			} else {
+				candidate.item.quantity = nextAmount > 0
+					? `${candidate.nestedName}${candidate.multiplier}${nextAmount}`
+					: "empty";
+			}
+
+			candidate.item.mentions.push(lineNum);
+			candidate.item.lastMention = lineNum;
+			remaining -= consumed;
+		}
+
+		return true;
+	}
+
+	private static parseNestedInventoryQuantity(
+		quantity: string
+	): { name: string; amount: number; multiplier: string } | null {
+		const match = quantity.trim().match(/^(.+?)\s*([×x])\s*(\d+)$/);
+		if (!match || !match[1] || !match[2] || !match[3]) return null;
+
+		return {
+			name: match[1].trim(),
+			amount: parseInt(match[3]),
+			multiplier: match[2],
+		};
+	}
+
 	/**
 	 * Parse Wealth tags: [Wealth:Gold 10|Silver 5]
 	 * Returns the most recent global wealth state
@@ -465,9 +553,10 @@ export class NotationParser {
 
 					if (value.includes("->")) {
 						currentState.set(currency, value.split("->").pop()?.trim() || "0");
-					} else if (value.match(/^[+-]\d+$/)) {
-						const currentVal = parseInt(currentState.get(currency) || "0");
-						currentState.set(currency, (currentVal + parseInt(value)).toString());
+					} else if (value.match(/^[+-]\d+(?:\.\d+)?$/)) {
+						const currentVal = currentState.get(currency) || "0";
+						const nextVal = this.addSignedDecimalStrings(currentVal, value);
+						currentState.set(currency, nextVal ?? value);
 					} else {
 						currentState.set(currency, value);
 					}
@@ -476,6 +565,128 @@ export class NotationParser {
 		}
 
 		return currentState;
+	}
+
+	private static addSignedDecimalStrings(base: string, delta: string): string | null {
+		const parsedBase = this.parseDecimalString(base);
+		const parsedDelta = this.parseDecimalString(delta);
+
+		if (!parsedBase || !parsedDelta) return null;
+
+		const scale = Math.max(parsedBase.scale, parsedDelta.scale);
+		const scaledBase = parsedBase.digits + "0".repeat(scale - parsedBase.scale);
+		const scaledDelta = parsedDelta.digits + "0".repeat(scale - parsedDelta.scale);
+
+		let negative = false;
+		let digits = "0";
+
+		if (parsedBase.negative === parsedDelta.negative) {
+			negative = parsedBase.negative;
+			digits = this.addIntegerStrings(scaledBase, scaledDelta);
+		} else {
+			const comparison = this.compareIntegerStrings(scaledBase, scaledDelta);
+			if (comparison === 0) {
+				return "0";
+			}
+
+			if (comparison > 0) {
+				negative = parsedBase.negative;
+				digits = this.subtractIntegerStrings(scaledBase, scaledDelta);
+			} else {
+				negative = parsedDelta.negative;
+				digits = this.subtractIntegerStrings(scaledDelta, scaledBase);
+			}
+		}
+
+		return this.formatScaledDecimal(negative, digits, scale);
+	}
+
+	private static parseDecimalString(value: string): { negative: boolean; digits: string; scale: number } | null {
+		const match = value.trim().match(/^([+-]?)(\d+)(?:\.(\d+))?$/);
+		if (!match || !match[2]) return null;
+
+		const integerPart = match[2];
+		const fractionalPart = match[3] || "";
+		const digits = this.trimLeadingZeros(`${integerPart}${fractionalPart}` || "0");
+
+		return {
+			negative: match[1] === "-" && digits !== "0",
+			digits,
+			scale: fractionalPart.length,
+		};
+	}
+
+	private static formatScaledDecimal(negative: boolean, digits: string, scale: number): string {
+		if (scale === 0) return `${negative ? "-" : ""}${digits}`;
+
+		const paddedDigits = digits.padStart(scale + 1, "0");
+		const sign = negative && digits !== "0" ? "-" : "";
+		const normalizedDigits = paddedDigits;
+		const integerPart = normalizedDigits.slice(0, -scale) || "0";
+		const fractionalPart = normalizedDigits.slice(-scale).replace(/0+$/, "");
+
+		return fractionalPart ? `${sign}${integerPart}.${fractionalPart}` : `${sign}${integerPart}`;
+	}
+
+	private static addIntegerStrings(a: string, b: string): string {
+		let carry = 0;
+		let result = "";
+		let i = a.length - 1;
+		let j = b.length - 1;
+
+		while (i >= 0 || j >= 0 || carry > 0) {
+			const digitA = i >= 0 ? Number(a[i]) : 0;
+			const digitB = j >= 0 ? Number(b[j]) : 0;
+			const sum = digitA + digitB + carry;
+			result = String(sum % 10) + result;
+			carry = Math.floor(sum / 10);
+			i--;
+			j--;
+		}
+
+		return this.trimLeadingZeros(result);
+	}
+
+	private static subtractIntegerStrings(a: string, b: string): string {
+		let borrow = 0;
+		let result = "";
+		let i = a.length - 1;
+		let j = b.length - 1;
+
+		while (i >= 0) {
+			let digitA = Number(a[i]) - borrow;
+			const digitB = j >= 0 ? Number(b[j]) : 0;
+
+			if (digitA < digitB) {
+				digitA += 10;
+				borrow = 1;
+			} else {
+				borrow = 0;
+			}
+
+			result = String(digitA - digitB) + result;
+			i--;
+			j--;
+		}
+
+		return this.trimLeadingZeros(result);
+	}
+
+	private static compareIntegerStrings(a: string, b: string): number {
+		const normalizedA = this.trimLeadingZeros(a);
+		const normalizedB = this.trimLeadingZeros(b);
+
+		if (normalizedA.length !== normalizedB.length) {
+			return normalizedA.length > normalizedB.length ? 1 : -1;
+		}
+
+		if (normalizedA === normalizedB) return 0;
+		return normalizedA > normalizedB ? 1 : -1;
+	}
+
+	private static trimLeadingZeros(value: string): string {
+		const trimmed = value.replace(/^0+/, "");
+		return trimmed === "" ? "0" : trimmed;
 	}
 
 	/**
