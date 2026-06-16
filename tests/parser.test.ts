@@ -187,4 +187,19 @@ describe('NotationParser', () => {
 		const dawn = result.progress.find(p => p.name === 'Dawn');
 		expect(dawn?.current).toBe(3);
 	});
+	
+	test('[Inv:Torch|3→2] with unicode arrow updates quantity', () => {
+		const content = '[Inv:Torch|3→2]';
+		const result = NotationParser.parse(content);
+		expect(result.inventory.get('Torch')?.quantity).toBe('2');
+	});
+
+	test('[Inv:Torch|3→1] shorthand using unicode arrow', () => {
+		const content = `
+        [Inv:Torch|3]
+        [Inv:Torch|3→1]
+    `;
+		const result = NotationParser.parse(content);
+		expect(result.inventory.get('Torch')?.quantity).toBe('1');
+	});
 });

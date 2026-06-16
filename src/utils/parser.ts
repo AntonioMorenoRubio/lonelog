@@ -404,7 +404,7 @@ export class NotationParser {
 
 			const parts = detailsPart.split("|").map(p => p.trim());
 			if (parts[0] && !deltaMatch) {
-				quantity = parts[0];
+				quantity = parts[0].replace(/→/g, "->");;
 			}
 			const properties = parts.slice(1).filter(p => p);
 
