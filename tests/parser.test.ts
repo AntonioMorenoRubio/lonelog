@@ -363,4 +363,15 @@ describe('NotationParser', () => {
 		expect(result.inventory.get('Shovel')?.slotParent).toBe('Backpack 1');
 		expect(result.inventory.has('Pickaxe')).toBe(false);
 	});
+
+	test('[Inv:Backpack 1|Shovel→Lantern] replaces Shovel with Lantern using unicode arrow', () => {
+	    const content = `
+	        [Inv:Backpack 1|Shovel]
+	        [Inv:Backpack 1|Shovel→Lantern]
+	    `;
+	    const result = NotationParser.parse(content);
+	    expect(result.inventory.has('Lantern')).toBe(true);
+	    expect(result.inventory.get('Lantern')?.slotParent).toBe('Backpack 1');
+	    expect(result.inventory.has('Shovel')).toBe(false);
+	});
 });

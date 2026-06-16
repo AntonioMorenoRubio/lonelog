@@ -573,8 +573,8 @@ export class NotationParser {
 	        } else if (mutation.startsWith("-")) {
 	            const itemName = mutation.slice(1).trim();
 	            inventory.delete(itemName);
-	        } else if (mutation.includes("->")) {
-	            const [from, to] = mutation.split("->").map(s => s.trim());
+	        } else if (mutation.includes("->") || mutation.includes("→")) {
+	            const [from, to] = mutation.replace(/→/g, "->").split("->").map(s => s.trim());
 	            if (from && to && inventory.has(from)) {
 	                const existing = inventory.get(from)!;
 	                inventory.delete(from);
