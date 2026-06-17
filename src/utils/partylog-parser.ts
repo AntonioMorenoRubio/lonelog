@@ -732,7 +732,7 @@ export class PartylogParser {
 		const parts = payload.split("|").map((part) => part.trim()).filter(Boolean);
 		parts.forEach((part) => {
 			const separatorMatch = /^([^:]+):(.*)$/.exec(part);
-			const numericDeltaMatch = /^([^:+\-]+)([+-].+)$/.exec(part);
+			const numericDeltaMatch = /^([^:+-]+)([+-].+)$/.exec(part);
 			let key = part;
 			let value = part;
 
