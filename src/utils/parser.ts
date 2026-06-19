@@ -518,6 +518,7 @@ export class NotationParser {
 	        const subItemRe = /([^,×]+?)\s*×\s*(\d+)/g;
 	        let sub;
 	        while ((sub = subItemRe.exec(parts[0])) !== null) {
+				if (!sub[1] || !sub[2]) continue;
 	            const subName = sub[1].trim();
 	            const subQty = sub[2];
 	            if (inventory.has(subName)) {
